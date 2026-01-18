@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">AUUDM</string>
+    <string name="add_receipt">রসিদ যোগ করুন</string>
+    <string name="list_receipts">রসিদ তালিকা</string>
+    <string name="settings">সেটিংস</string>
+    <string name="receipt_no">রসিদ নং</string>
+    <string name="donor_name">দাতার নাম</string>
+    <string name="address">ঠিকানা</string>
+    <string name="month">মাস</string>
+    <string name="amount">পরিমাণ</string>
+    <string name="recipient_name">প্রাপকের নাম</string>
+    <string name="recipient_designation">প্রাপকের পদবী</string>
+    <string name="medium">মাধ্যম</string>
+    <string name="medium_reference">মাধ্যম রেফারেন্স</string>
+    <string name="date">তারিখ</string>
+    <string name="save">সংরক্ষণ</string>
+    <string name="cancel">বাতিল</string>
+    <string name="select_month">মাস নির্বাচন করুন</string>
+    <string name="select_medium">মাধ্যম নির্বাচন করুন</string>
+    <string name="dark_mode">ডার্ক মোড</string>
+    <string name="language">ভাষা</string>
+    <string name="english">ইংরেজি</string>
+    <string name="bangla">বাংলা</string>
+    <string name="search">অনুসন্ধান</string>
+    <string name="no_receipts">কোন রসিদ পাওয়া যায়নি</string>
+</resources>
+
