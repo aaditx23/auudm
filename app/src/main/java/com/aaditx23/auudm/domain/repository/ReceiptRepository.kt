@@ -11,4 +11,5 @@ interface ReceiptRepository {
 
     fun searchReceipts(query: String): Flow<List<Receipt>>
 
+    fun getReceiptById(id: Long): Flow<Receipt>
 }

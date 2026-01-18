@@ -1,5 +1,6 @@
 package com.aaditx23.auudm.presentation.components
 
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -20,6 +21,7 @@ fun AppBarComponent(
     actions: @Composable () -> Unit = {}
 ) {
     TopAppBar(
+        windowInsets = WindowInsets(0),
         title = {
             Text(
                 text = title,

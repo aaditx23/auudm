@@ -27,13 +27,13 @@ import com.aaditx23.auudm.presentation.screens.ListReceiptScreen.components.Rece
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun ListReceiptScreen(navController: NavController) {
-    val viewModel: ListReceiptViewModel = koinViewModel()
+fun ReceiptListScreen(navController: NavController) {
+    val viewModel: ReceiptListViewModel = koinViewModel()
     val receipts by viewModel.receipts.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
 
     Scaffold(
-        topBar = { AppBarComponent(title = stringResource(R.string.list_receipts)) },
+        topBar = { AppBarComponent(title = stringResource(R.string.receipts_list)) },
         floatingActionButton = {
             FloatingActionButton(onClick = { navController.navigate("add_receipt") }) {
                 Icon(Icons.Filled.Add, contentDescription = "Add Receipt")
@@ -59,7 +59,7 @@ fun ListReceiptScreen(navController: NavController) {
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(receipts) { receipt ->
-                    ReceiptItem(receipt)
+                    ReceiptItem(receipt, navController)
                 }
             }
 

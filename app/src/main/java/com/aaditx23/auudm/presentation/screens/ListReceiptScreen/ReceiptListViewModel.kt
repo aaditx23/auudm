@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class ListReceiptViewModel(
+class ReceiptListViewModel(
     private val getReceiptsUseCase: GetReceiptsUseCase,
     private val searchReceiptsUseCase: SearchReceiptsUseCase
 ) : ViewModel() {

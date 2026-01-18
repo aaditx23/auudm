@@ -17,8 +17,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.aaditx23.auudm.presentation.navigation.Screen
 import com.aaditx23.auudm.presentation.screens.AddReceiptScreen.AddReceiptScreen
-import com.aaditx23.auudm.presentation.screens.ListReceiptScreen.ListReceiptScreen
+import com.aaditx23.auudm.presentation.screens.ListReceiptScreen.ReceiptListScreen
 import com.aaditx23.auudm.presentation.screens.SettingsScreen.SettingsScreen
+import com.aaditx23.auudm.presentation.screens.ReceiptDetailsScreen.ReceiptDetailsScreen
 
 @Composable
 fun App() {
@@ -59,8 +60,12 @@ fun App() {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.AddReceipt.route) { AddReceiptScreen(navController) }
-            composable(Screen.ListReceipts.route) { ListReceiptScreen(navController) }
+            composable(Screen.ListReceipts.route) { ReceiptListScreen(navController) }
             composable(Screen.Settings.route) { SettingsScreen(navController) }
+            composable("receipt_details/{id}") { backStackEntry ->
+                val id = backStackEntry.arguments?.getString("id")?.toLongOrNull() ?: 0L
+                ReceiptDetailsScreen(navController, id)
+            }
         }
     }
 }

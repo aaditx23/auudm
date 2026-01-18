@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.aaditx23.auudm.R
@@ -100,7 +101,8 @@ fun AddReceiptScreen(navController: NavController) {
                 value = amount,
                 onValueChange = { amount = it },
                 label = stringResource(R.string.amount),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                keyboardType = KeyboardType.Number
             )
 
             CustomTextField(

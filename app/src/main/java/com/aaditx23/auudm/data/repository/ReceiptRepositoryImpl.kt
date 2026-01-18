@@ -29,4 +29,7 @@ class ReceiptRepositoryImpl(
         }
     }
 
+    override fun getReceiptById(id: Long): Flow<Receipt> {
+        return dao.getReceiptById(id).map { it.toDomain() }
+    }
 }

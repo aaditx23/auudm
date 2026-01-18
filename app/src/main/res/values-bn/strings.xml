@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">AUUDM</string>
     <string name="add_receipt">রসিদ যোগ করুন</string>
-    <string name="list_receipts">রসিদ তালিকা</string>
+    <string name="receipts_list">রসিদ তালিকা</string>
     <string name="settings">সেটিংস</string>
     <string name="receipt_no">রসিদ নং</string>
     <string name="donor_name">দাতার নাম</string>
@@ -45,4 +45,5 @@
     <string name="month_label">মাস:</string>
     <string name="medium_label">মাধ্যম:</string>
     <string name="reference">রেফারেন্স:</string>
+    <string name="receipt_details">রসিদের বিস্তারিত</string>
 </resources>

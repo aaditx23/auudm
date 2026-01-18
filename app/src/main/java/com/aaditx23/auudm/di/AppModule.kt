@@ -9,7 +9,9 @@ import com.aaditx23.auudm.domain.usecase.GetReceiptsUseCase
 import com.aaditx23.auudm.domain.usecase.SaveReceiptUseCase
 import com.aaditx23.auudm.domain.usecase.SearchReceiptsUseCase
 import com.aaditx23.auudm.presentation.screens.AddReceiptScreen.AddReceiptViewModel
-import com.aaditx23.auudm.presentation.screens.ListReceiptScreen.ListReceiptViewModel
+
+import com.aaditx23.auudm.presentation.screens.ListReceiptScreen.ReceiptListViewModel
+import com.aaditx23.auudm.presentation.screens.ReceiptDetailsScreen.ReceiptDetailsViewModel
 import com.aaditx23.auudm.presentation.screens.SettingsScreen.SettingsViewModel
 
 import org.koin.android.ext.koin.androidContext
@@ -44,6 +46,7 @@ val appModule = module {
 
     // ViewModel
     viewModelOf(::AddReceiptViewModel)
-    viewModelOf(::ListReceiptViewModel)
+    viewModelOf(::ReceiptListViewModel)
     viewModelOf(::SettingsViewModel)
+    viewModelOf(::ReceiptDetailsViewModel)
 }

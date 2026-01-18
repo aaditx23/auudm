@@ -16,7 +16,12 @@ interface ReceiptDao {
     @Query("SELECT * FROM receipts ORDER BY id DESC")
     fun getAllReceipts(): Flow<List<ReceiptEntity>>
 
-    @Query("SELECT * FROM receipts WHERE donorName LIKE '%' || :query || '%' OR id LIKE '%' || :query || '%' ORDER BY id DESC")
+    @Query("SELECT * FROM receipts WHERE " +
+            "donorName LIKE '%' || :query || '%' OR " +
+            "id LIKE '%' || :query || '%' " +
+            "ORDER BY id DESC")
     fun searchReceipts(query: String): Flow<List<ReceiptEntity>>
 
+    @Query("SELECT * FROM receipts WHERE id = :id")
+    fun getReceiptById(id: Long): Flow<ReceiptEntity>
 }
