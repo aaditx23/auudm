@@ -8,9 +8,10 @@ import com.aaditx23.auudm.domain.repository.ReceiptRepository
 import com.aaditx23.auudm.domain.usecase.GetReceiptsUseCase
 import com.aaditx23.auudm.domain.usecase.SaveReceiptUseCase
 import com.aaditx23.auudm.domain.usecase.SearchReceiptsUseCase
-import com.aaditx23.auudm.ui.screens.AddReceiptScreen.AddReceiptViewModel
-import com.aaditx23.auudm.ui.screens.ListReceiptScreen.ListReceiptViewModel
-import com.aaditx23.auudm.ui.screens.SettingsScreen.SettingsViewModel
+import com.aaditx23.auudm.presentation.screens.AddReceiptScreen.AddReceiptViewModel
+import com.aaditx23.auudm.presentation.screens.ListReceiptScreen.ListReceiptViewModel
+import com.aaditx23.auudm.presentation.screens.SettingsScreen.SettingsViewModel
+
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.viewModelOf

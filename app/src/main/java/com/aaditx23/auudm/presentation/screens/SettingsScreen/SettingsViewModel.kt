@@ -1,4 +1,4 @@
-package com.aaditx23.auudm.ui.screens.SettingsScreen
+package com.aaditx23.auudm.presentation.screens.SettingsScreen
 
 import androidx.lifecycle.ViewModel
 

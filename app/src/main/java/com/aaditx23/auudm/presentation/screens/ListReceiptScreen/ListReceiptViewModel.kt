@@ -1,4 +1,4 @@
-package com.aaditx23.auudm.ui.screens.ListReceiptScreen
+package com.aaditx23.auudm.presentation.screens.ListReceiptScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

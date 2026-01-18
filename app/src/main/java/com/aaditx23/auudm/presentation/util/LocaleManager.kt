@@ -1,4 +1,4 @@
-package com.aaditx23.auudm.ui.util
+package com.aaditx23.auudm.presentation.util
 
 import android.content.Context
 import android.content.res.Configuration

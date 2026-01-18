@@ -5,7 +5,6 @@ import com.aaditx23.auudm.domain.model.Receipt
 
 fun Receipt.toEntity() = ReceiptEntity(
     id = id,
-    receiptNo = receiptNo,
     donorName = donorName,
     address = address,
     month = month,
@@ -19,7 +18,6 @@ fun Receipt.toEntity() = ReceiptEntity(
 
 fun ReceiptEntity.toDomain() = Receipt(
     id = id,
-    receiptNo = receiptNo,
     donorName = donorName,
     address = address,
     month = month,

@@ -23,5 +23,26 @@
     <string name="bangla">বাংলা</string>
     <string name="search">অনুসন্ধান</string>
     <string name="no_receipts">কোন রসিদ পাওয়া যায়নি</string>
+    <string name="january">জানুয়ারি</string>
+    <string name="february">ফেব্রুয়ারি</string>
+    <string name="march">মার্চ</string>
+    <string name="april">এপ্রিল</string>
+    <string name="may">মে</string>
+    <string name="june">জুন</string>
+    <string name="july">জুলাই</string>
+    <string name="august">আগস্ট</string>
+    <string name="september">সেপ্টেম্বর</string>
+    <string name="october">অক্টোবর</string>
+    <string name="november">নভেম্বর</string>
+    <string name="december">ডিসেম্বর</string>
+    <string name="bkash">বিকাশ</string>
+    <string name="bank">ব্যাংক</string>
+    <string name="cash">নগদ</string>
+    <string name="receipt_no_label">রসিদ নং:</string>
+    <string name="donor">দাতা:</string>
+    <string name="amount_label">পরিমাণ:</string>
+    <string name="date_label">তারিখ:</string>
+    <string name="month_label">মাস:</string>
+    <string name="medium_label">মাধ্যম:</string>
+    <string name="reference">রেফারেন্স:</string>
 </resources>
-

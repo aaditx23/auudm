@@ -23,4 +23,26 @@
     <string name="bangla">Bangla</string>
     <string name="search">Search</string>
     <string name="no_receipts">No receipts found</string>
+    <string name="january">January</string>
+    <string name="february">February</string>
+    <string name="march">March</string>
+    <string name="april">April</string>
+    <string name="may">May</string>
+    <string name="june">June</string>
+    <string name="july">July</string>
+    <string name="august">August</string>
+    <string name="september">September</string>
+    <string name="october">October</string>
+    <string name="november">November</string>
+    <string name="december">December</string>
+    <string name="bkash">bKash</string>
+    <string name="bank">Bank</string>
+    <string name="cash">Cash</string>
+    <string name="receipt_no_label">Receipt No:</string>
+    <string name="donor">Donor:</string>
+    <string name="amount_label">Amount:</string>
+    <string name="date_label">Date:</string>
+    <string name="month_label">Month:</string>
+    <string name="medium_label">Medium:</string>
+    <string name="reference">Reference:</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.aaditx23.auudm.ui.navigation
+package com.aaditx23.auudm.presentation.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
