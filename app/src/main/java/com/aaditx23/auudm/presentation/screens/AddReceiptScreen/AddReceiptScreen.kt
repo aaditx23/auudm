@@ -25,13 +25,13 @@ import com.aaditx23.auudm.R
 import com.aaditx23.auudm.domain.model.Receipt
 import com.aaditx23.auudm.presentation.components.AppBarComponent
 import com.aaditx23.auudm.presentation.components.CustomDropdown
+import com.aaditx23.auudm.presentation.components.DigitalReceipt.DigitalReceiptDialog
 import com.aaditx23.auudm.presentation.util.Constants
 import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
-import kotlin.collections.get
 
 @Composable
 fun AddReceiptScreen(navController: NavController) {
@@ -52,6 +52,8 @@ fun AddReceiptScreen(navController: NavController) {
     var recipientDesignation by remember { mutableStateOf("") }
     var selectedMedium by remember { mutableStateOf(mediums[0]) }
     var mediumReference by remember { mutableStateOf("") }
+
+    var showDialog by remember { mutableStateOf(false) }
 
     println(currentMonth)
     println(selectedMonth)
@@ -137,6 +139,13 @@ fun AddReceiptScreen(navController: NavController) {
             }
 
             Button(
+                onClick = { showDialog = true },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Preview Receipt")
+            }
+
+            Button(
                 onClick = {
                     val receipt = Receipt(
                         donorName = donorName,
@@ -157,5 +166,23 @@ fun AddReceiptScreen(navController: NavController) {
                 Text(stringResource(R.string.save))
             }
         }
+    }
+
+    if (showDialog) {
+        DigitalReceiptDialog(
+            receipt = Receipt(
+                id = 0, // Temporary for demo
+                donorName = donorName,
+                address = address,
+                month = months.indexOf(selectedMonth) + 1,
+                amount = amount.toDoubleOrNull() ?: 0.0,
+                recipientName = recipientName,
+                recipientDesignation = recipientDesignation,
+                medium = mediums.indexOf(selectedMedium) + 1,
+                mediumReference = mediumReference,
+                date = System.currentTimeMillis()
+            ),
+            onDismiss = { showDialog = false }
+        )
     }
 }
