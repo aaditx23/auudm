@@ -80,4 +80,14 @@
     <string name="amount_required">Valid amount is required</string>
     <string name="recipient_name_required">Recipient name is required</string>
     <string name="recipient_designation_required">Recipient designation is required</string>
+
+    <!-- Sync Messages -->
+    <string name="sync_all_success">All receipts synced to cloud successfully!</string>
+    <string name="sync_pending_success">Pending receipts synced successfully!</string>
+    <string name="sync_failed">Sync failed:</string>
+
+    <!-- Pending Sync -->
+    <string name="sync_pending_receipts">Sync Pending Receipts</string>
+    <string name="sync_pending_description">Sync receipts that were created offline and haven\'t been uploaded yet.</string>
+    <string name="sync_pending">Sync Pending</string>
 </resources>

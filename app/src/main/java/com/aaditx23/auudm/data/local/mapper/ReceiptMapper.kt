@@ -13,7 +13,8 @@ fun Receipt.toEntity() = ReceiptEntity(
     recipientDesignation = recipientDesignation,
     medium = medium,
     mediumReference = mediumReference,
-    date = date
+    date = date,
+    isSynced = isSynced
 )
 
 fun ReceiptEntity.toDomain() = Receipt(
@@ -26,5 +27,6 @@ fun ReceiptEntity.toDomain() = Receipt(
     recipientDesignation = recipientDesignation,
     medium = medium,
     mediumReference = mediumReference,
-    date = date
+    date = date,
+    isSynced = isSynced
 )

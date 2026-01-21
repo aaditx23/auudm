@@ -63,7 +63,7 @@ fun App() {
             composable(Screen.ListReceipts.route) { ReceiptListScreen(navController) }
             composable(Screen.Settings.route) { SettingsScreen(navController) }
             composable("receipt_details/{id}") { backStackEntry ->
-                val id = backStackEntry.arguments?.getString("id")?.toLongOrNull() ?: 0L
+                val id = backStackEntry.arguments?.getString("id") ?: ""
                 ReceiptDetailsScreen(navController, id)
             }
         }

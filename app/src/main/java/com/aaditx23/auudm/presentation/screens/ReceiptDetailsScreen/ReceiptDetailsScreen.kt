@@ -41,7 +41,7 @@ import java.util.Date
 import java.util.Locale
 
 @Composable
-fun ReceiptDetailsScreen(navController: NavController, receiptId: Long) {
+fun ReceiptDetailsScreen(navController: NavController, receiptId: String) {
     val viewModel: ReceiptDetailsViewModel = koinViewModel { parametersOf(receiptId) }
     val uiState by viewModel.uiState.collectAsState()
 
@@ -103,7 +103,7 @@ fun ReceiptDetailsScreen(navController: NavController, receiptId: Long) {
                 // Receipt Number Card
                 InfoCard(
                     label = stringResource(R.string.receipt_no_label),
-                    value = numberFormat.format(receiptData.id)
+                    value = receiptData.id
                 )
 
                 // Donor Information Card

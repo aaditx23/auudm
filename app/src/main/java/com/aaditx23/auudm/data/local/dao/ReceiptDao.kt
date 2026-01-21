@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 interface ReceiptDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(receipt: ReceiptEntity): Long
+    suspend fun insert(receipt: ReceiptEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(receipts: List<ReceiptEntity>)
@@ -29,5 +29,11 @@ interface ReceiptDao {
     fun searchReceipts(query: String): Flow<List<ReceiptEntity>>
 
     @Query("SELECT * FROM receipts WHERE id = :id")
-    fun getReceiptById(id: Long): Flow<ReceiptEntity>
+    fun getReceiptById(id: String): Flow<ReceiptEntity>
+
+    @Query("UPDATE receipts SET isSynced = :synced WHERE id = :id")
+    suspend fun updateSyncStatus(id: String, synced: Boolean)
+
+    @Query("SELECT * FROM receipts WHERE isSynced = 0 ORDER BY id DESC")
+    fun getUnsyncedReceipts(): Flow<List<ReceiptEntity>>
 }

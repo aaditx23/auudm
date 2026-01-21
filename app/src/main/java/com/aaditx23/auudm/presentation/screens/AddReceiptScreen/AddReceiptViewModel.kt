@@ -1,14 +1,18 @@
 package com.aaditx23.auudm.presentation.screens.AddReceiptScreen
 
 import androidx.lifecycle.ViewModel
+import com.aaditx23.auudm.data.NetworkMonitor
 import com.aaditx23.auudm.domain.model.Receipt
 import com.aaditx23.auudm.domain.usecase.SaveReceiptUseCase
+import com.aaditx23.auudm.domain.usecase.SyncReceiptToFirestoreUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class AddReceiptViewModel(
-    private val saveReceiptUseCase: SaveReceiptUseCase
+    private val saveReceiptUseCase: SaveReceiptUseCase,
+    private val syncReceiptToFirestoreUseCase: SyncReceiptToFirestoreUseCase,
+    private val networkMonitor: NetworkMonitor
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AddReceiptUiState())
@@ -81,6 +85,9 @@ class AddReceiptViewModel(
         _uiState.value = state.copy(isLoading = true, error = null)
         return try {
             val saved = saveReceiptUseCase(receipt)
+            if (networkMonitor.isNetworkAvailable()) {
+                syncReceiptToFirestoreUseCase(saved)
+            }
             _uiState.value = _uiState.value.copy(isLoading = false)
             saved
         } catch (e: Exception) {
@@ -96,8 +103,23 @@ class AddReceiptViewModel(
         )
     }
 
-    fun showDialog(receipt: Receipt) {
-        _uiState.value = _uiState.value.copy(showDialog = true, savedReceipt = receipt)
+    fun previewReceipt(months: List<String>, mediums: List<String>): Receipt {
+        val state = _uiState.value
+        return Receipt(
+            donorName = state.donorName,
+            address = state.address,
+            month = months.indexOf(state.selectedMonth) + 1,
+            amount = state.amount.toDoubleOrNull() ?: 0.0,
+            recipientName = state.recipientName,
+            recipientDesignation = state.recipientDesignation,
+            medium = mediums.indexOf(state.selectedMedium) + 1,
+            mediumReference = state.mediumReference,
+            date = System.currentTimeMillis()
+        )
+    }
+
+    fun showDialog(receipt: Receipt, isPreview: Boolean = false) {
+        _uiState.value = _uiState.value.copy(showDialog = true, savedReceipt = receipt, isPreview = isPreview)
     }
 
     fun dismissDialog() {

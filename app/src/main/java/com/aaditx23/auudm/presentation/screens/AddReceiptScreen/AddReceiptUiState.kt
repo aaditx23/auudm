@@ -19,5 +19,6 @@ data class AddReceiptUiState(
     val isLoading: Boolean = false,
     val error: String? = null,
     val showDialog: Boolean = false,
-    val savedReceipt: Receipt? = null
+    val savedReceipt: Receipt? = null,
+    val isPreview: Boolean = false
 )

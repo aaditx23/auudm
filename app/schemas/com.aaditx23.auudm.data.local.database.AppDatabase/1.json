@@ -2,16 +2,16 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "3c3741f00b34fdcd11a7ca5560536eef",
+    "identityHash": "9cd621061bea11b4ac58fdd1bc51c41b",
     "entities": [
       {
         "tableName": "receipts",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `donorName` TEXT NOT NULL, `address` TEXT NOT NULL, `month` INTEGER NOT NULL, `amount` REAL NOT NULL, `recipientName` TEXT NOT NULL, `recipientDesignation` TEXT NOT NULL, `medium` INTEGER NOT NULL, `mediumReference` TEXT NOT NULL, `date` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `donorName` TEXT NOT NULL, `address` TEXT NOT NULL, `month` INTEGER NOT NULL, `amount` REAL NOT NULL, `recipientName` TEXT NOT NULL, `recipientDesignation` TEXT NOT NULL, `medium` INTEGER NOT NULL, `mediumReference` TEXT NOT NULL, `date` INTEGER NOT NULL, `isSynced` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -67,10 +67,16 @@
             "columnName": "date",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "isSynced",
+            "columnName": "isSynced",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
-          "autoGenerate": true,
+          "autoGenerate": false,
           "columnNames": [
             "id"
           ]
@@ -79,7 +85,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3c3741f00b34fdcd11a7ca5560536eef')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9cd621061bea11b4ac58fdd1bc51c41b')"
     ]
   }
 }

@@ -80,4 +80,14 @@
     <string name="amount_required">বৈধ পরিমাণ প্রয়োজন</string>
     <string name="recipient_name_required">প্রাপকের নাম প্রয়োজন</string>
     <string name="recipient_designation_required">প্রাপকের পদবী প্রয়োজন</string>
+
+    <!-- Sync Messages -->
+    <string name="sync_all_success">সমস্ত রসিদ ক্লাউডে সিঙ্ক হয়েছে!</string>
+    <string name="sync_pending_success">অপেক্ষমান রসিদ সিঙ্ক হয়েছে!</string>
+    <string name="sync_failed">সিঙ্ক ব্যর্থ:</string>
+
+    <!-- Pending Sync -->
+    <string name="sync_pending_receipts">অপেক্ষমান রসিদ সিঙ্ক করুন</string>
+    <string name="sync_pending_description">অফলাইনে তৈরি রসিদ যা এখনও আপলোড হয়নি তা সিঙ্ক করুন।</string>
+    <string name="sync_pending">অপেক্ষমান সিঙ্ক</string>
 </resources>

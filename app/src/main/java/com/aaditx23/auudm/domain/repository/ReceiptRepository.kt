@@ -5,22 +5,26 @@ import kotlinx.coroutines.flow.Flow
 
 interface ReceiptRepository {
 
-    suspend fun saveReceipt(receipt: Receipt): Long
+    suspend fun saveReceipt(receipt: Receipt): String
 
     fun getReceipts(): Flow<List<Receipt>>
 
     fun searchReceipts(query: String): Flow<List<Receipt>>
 
-    fun getReceiptById(id: Long): Flow<Receipt>
+    fun getReceiptById(id: String): Flow<Receipt>
 
     // Firestore operations
     suspend fun syncReceiptToFirestore(receipt: Receipt): Result<Unit>
 
     suspend fun syncAllReceiptsToFirestore(): Result<Unit>
 
-    suspend fun deleteReceiptFromFirestore(id: Long): Result<Unit>
+    suspend fun deleteReceiptFromFirestore(id: String): Result<Unit>
 
     fun getReceiptsFromFirestore(): Flow<List<Receipt>>
 
     suspend fun syncAllFromFirestore(): Result<Unit>
+
+    suspend fun updateSyncStatus(id: String, synced: Boolean): Result<Unit>
+
+    fun getUnsyncedReceipts(): Flow<List<Receipt>>
 }

@@ -11,4 +11,3 @@ class GetReceiptsFromFirestoreUseCase(
         return repository.getReceiptsFromFirestore()
     }
 }
-

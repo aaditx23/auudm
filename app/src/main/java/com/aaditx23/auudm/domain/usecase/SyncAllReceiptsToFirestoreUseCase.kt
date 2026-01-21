@@ -9,4 +9,3 @@ class SyncAllReceiptsToFirestoreUseCase(
         return repository.syncAllReceiptsToFirestore()
     }
 }
-

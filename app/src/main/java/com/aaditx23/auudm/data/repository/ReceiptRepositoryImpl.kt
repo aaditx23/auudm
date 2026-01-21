@@ -17,15 +17,10 @@ class ReceiptRepositoryImpl(
     private val firestoreDataSource: FirestoreDataSource
 ) : ReceiptRepository {
 
-    override suspend fun saveReceipt(receipt: Receipt): Long {
+    override suspend fun saveReceipt(receipt: Receipt): String {
         val entity = receipt.toEntity()
-        val id = dao.insert(entity)
-
-        // Auto-sync to Firestore after saving locally
-        val receiptWithId = receipt.copy(id = id)
-        syncReceiptToFirestore(receiptWithId)
-
-        return id
+        dao.insert(entity)
+        return receipt.id
     }
 
     override fun getReceipts(): Flow<List<Receipt>> {
@@ -40,7 +35,7 @@ class ReceiptRepositoryImpl(
         }
     }
 
-    override fun getReceiptById(id: Long): Flow<Receipt> {
+    override fun getReceiptById(id: String): Flow<Receipt> {
         return dao.getReceiptById(id).map { it.toDomain() }
     }
 
@@ -55,15 +50,18 @@ class ReceiptRepositoryImpl(
 
     override suspend fun syncAllReceiptsToFirestore(): Result<Unit> {
         return try {
-            val receipts = dao.getAllReceipts().first()
+            val receipts = dao.getUnsyncedReceipts().first()
             val dtos = receipts.map { it.toDomain().toDto() }
             firestoreDataSource.syncReceipts(dtos)
+            // Mark as synced
+            receipts.forEach { dao.updateSyncStatus(it.id, true) }
+            Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    override suspend fun deleteReceiptFromFirestore(id: Long): Result<Unit> {
+    override suspend fun deleteReceiptFromFirestore(id: String): Result<Unit> {
         return firestoreDataSource.deleteReceipt(id)
     }
 
@@ -84,6 +82,21 @@ class ReceiptRepositoryImpl(
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
+        }
+    }
+
+    override suspend fun updateSyncStatus(id: String, synced: Boolean): Result<Unit> {
+        return try {
+            dao.updateSyncStatus(id, synced)
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override fun getUnsyncedReceipts(): Flow<List<Receipt>> {
+        return dao.getUnsyncedReceipts().map { entities ->
+            entities.map { it.toDomain() }
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.aaditx23.auudm.di
 
 import androidx.room.Room
+import com.aaditx23.auudm.data.NetworkMonitor
 import com.aaditx23.auudm.data.local.database.AppDatabase
 import com.aaditx23.auudm.data.local.datastore.SettingsDataStore
 import com.aaditx23.auudm.data.remote.datasource.FirestoreDataSource
@@ -13,6 +14,7 @@ import com.aaditx23.auudm.domain.usecase.SearchReceiptsUseCase
 import com.aaditx23.auudm.domain.usecase.SyncReceiptToFirestoreUseCase
 import com.aaditx23.auudm.domain.usecase.SyncAllReceiptsToFirestoreUseCase
 import com.aaditx23.auudm.domain.usecase.GetReceiptsFromFirestoreUseCase
+import com.aaditx23.auudm.domain.usecase.SyncPendingReceiptsUseCase
 import com.aaditx23.auudm.presentation.screens.AddReceiptScreen.AddReceiptViewModel
 
 import com.aaditx23.auudm.presentation.screens.ListReceiptScreen.ReceiptListViewModel
@@ -55,9 +57,13 @@ val appModule = module {
     factoryOf(::SyncReceiptToFirestoreUseCase)
     factoryOf(::SyncAllReceiptsToFirestoreUseCase)
     factoryOf(::GetReceiptsFromFirestoreUseCase)
+    factoryOf(::SyncPendingReceiptsUseCase)
 
     // Settings
     single { SettingsDataStore(androidContext()) }
+
+    // Network Monitor
+    single { NetworkMonitor(androidContext()) }
 
     // ViewModel
     viewModelOf(::AddReceiptViewModel)

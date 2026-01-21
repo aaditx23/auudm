@@ -76,7 +76,9 @@ fun AddReceiptScreen(navController: NavController) {
                         if (viewModel.validateFields()) {
                             scope.launch {
                                 val receipt = viewModel.saveReceipt(months, mediums)
-                                viewModel.showDialog(receipt)
+                                viewModel.resetForm(months[currentMonth], mediums[0])
+                                viewModel.showDialog(receipt, true)
+
                             }
                         }
                     }
@@ -93,7 +95,6 @@ fun AddReceiptScreen(navController: NavController) {
                         if (viewModel.validateFields()) {
                             scope.launch {
                                 viewModel.saveReceipt(months, mediums)
-                                viewModel.resetForm(months[currentMonth - 1], mediums[0])
                                 navController.popBackStack()
                             }
                         }

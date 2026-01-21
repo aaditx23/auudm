@@ -61,16 +61,19 @@ fun SettingsScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
+    val successMessage = if (viewModel.lastSyncType == "pending") stringResource(R.string.sync_pending_success) else stringResource(R.string.sync_all_success)
+    val errorMessage = stringResource(R.string.sync_failed) + " ${syncState.syncError}"
+
     // Show snackbar when sync completes
     LaunchedEffect(syncState) {
         if (syncState.syncSuccess) {
             scope.launch {
-                snackbarHostState.showSnackbar("All receipts synced to cloud successfully!")
+                snackbarHostState.showSnackbar(successMessage)
                 viewModel.clearSyncState()
             }
         } else if (syncState.syncError != null) {
             scope.launch {
-                snackbarHostState.showSnackbar("Sync failed: ${syncState.syncError}")
+                snackbarHostState.showSnackbar(errorMessage)
                 viewModel.clearSyncState()
             }
         }
@@ -204,6 +207,64 @@ fun SettingsScreen(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(stringResource(R.string.sync_all_receipts))
+                        }
+                    }
+                }
+            }
+
+            // Sync Pending Receipts
+            Card(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.CloudUpload,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                        Text(
+                            text = stringResource(R.string.sync_pending_receipts),
+                            style = MaterialTheme.typography.titleSmall
+                        )
+                    }
+
+                    Text(
+                        text = stringResource(R.string.sync_pending_description),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+
+                    Button(
+                        onClick = { viewModel.syncPendingToFirestore() },
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = !syncState.isSyncing
+                    ) {
+                        if (syncState.isSyncing) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(20.dp),
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                strokeWidth = 2.dp
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(stringResource(R.string.syncing))
+                        } else {
+                            Icon(
+                                imageVector = Icons.Filled.CloudUpload,
+                                contentDescription = null,
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(stringResource(R.string.sync_pending))
                         }
                     }
                 }

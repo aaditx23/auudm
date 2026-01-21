@@ -22,7 +22,7 @@ class FirestoreDataSource(
     suspend fun saveReceipt(receipt: ReceiptDto): Result<Unit> {
         return try {
             firestore.collection(RECEIPTS_COLLECTION)
-                .document(receipt.id.toString())
+                .document(receipt.id)
                 .set(receipt)
                 .await()
             Result.success(Unit)
@@ -62,10 +62,10 @@ class FirestoreDataSource(
      * @param id The receipt ID
      * @return Result containing the receipt or error
      */
-    suspend fun getReceiptById(id: Long): Result<ReceiptDto> {
+    suspend fun getReceiptById(id: String): Result<ReceiptDto> {
         return try {
             val document = firestore.collection(RECEIPTS_COLLECTION)
-                .document(id.toString())
+                .document(id)
                 .get()
                 .await()
 
@@ -85,10 +85,10 @@ class FirestoreDataSource(
      * @param id The receipt ID to delete
      * @return Result indicating success or failure
      */
-    suspend fun deleteReceipt(id: Long): Result<Unit> {
+    suspend fun deleteReceipt(id: String): Result<Unit> {
         return try {
             firestore.collection(RECEIPTS_COLLECTION)
-                .document(id.toString())
+                .document(id)
                 .delete()
                 .await()
             Result.success(Unit)
@@ -108,7 +108,7 @@ class FirestoreDataSource(
             
             receipts.forEach { receipt ->
                 val docRef = firestore.collection(RECEIPTS_COLLECTION)
-                    .document(receipt.id.toString())
+                    .document(receipt.id)
                 batch.set(docRef, receipt)
             }
             
@@ -141,4 +141,3 @@ class FirestoreDataSource(
         }
     }
 }
-

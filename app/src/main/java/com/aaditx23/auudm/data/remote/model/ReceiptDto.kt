@@ -1,7 +1,7 @@
 package com.aaditx23.auudm.data.remote.model
 
 data class ReceiptDto(
-    val id: Long = 0,
+    val id: String,
     val donorName: String = "",
     val address: String = "",
     val month: Int = 0,

@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 
 class ReceiptDetailsViewModel(
     private val getReceiptByIdUseCase: GetReceiptByIdUseCase,
-    private val receiptId: Long
+    private val receiptId: String
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ReceiptDetailsUiState())
