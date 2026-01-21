@@ -61,4 +61,9 @@
     <string name="amount_short">টাকা:</string>
     <string name="recipient_signature">গ্রহণকারীর স্বাক্ষর:</string>
     <string name="designation_label">পদ:</string>
+
+    <!-- Receipt Details Screen -->
+    <string name="donor_information">দাতার তথ্য</string>
+    <string name="payment_details">পেমেন্ট বিবরণ</string>
+    <string name="recipient_information">প্রাপকের তথ্য</string>
 </resources>

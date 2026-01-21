@@ -61,4 +61,9 @@
     <string name="amount_short">Amount:</string>
     <string name="recipient_signature">Recipient\'s Signature:</string>
     <string name="designation_label">Designation:</string>
+
+    <!-- Receipt Details Screen -->
+    <string name="donor_information">Donor Information</string>
+    <string name="payment_details">Payment Details</string>
+    <string name="recipient_information">Recipient Information</string>
 </resources>
