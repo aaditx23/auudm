@@ -1,21 +1,27 @@
 package com.aaditx23.auudm.presentation.screens.AddReceiptScreen
 
-import CustomTextField
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -25,6 +31,7 @@ import com.aaditx23.auudm.R
 import com.aaditx23.auudm.domain.model.Receipt
 import com.aaditx23.auudm.presentation.components.AppBarComponent
 import com.aaditx23.auudm.presentation.components.CustomDropdown
+import com.aaditx23.auudm.presentation.components.CustomTextField
 import com.aaditx23.auudm.presentation.components.DigitalReceipt.DigitalReceiptDialog
 import com.aaditx23.auudm.presentation.util.Constants
 import org.koin.androidx.compose.koinViewModel
@@ -36,7 +43,6 @@ import java.util.Locale
 @Composable
 fun AddReceiptScreen(navController: NavController) {
     val viewModel: AddReceiptViewModel = koinViewModel()
-
 
     val months = Constants.MONTH_IDS.map { stringResource(it) }
     val mediums = Constants.MEDIUM_IDS.map { stringResource(it) }
@@ -53,18 +59,80 @@ fun AddReceiptScreen(navController: NavController) {
     var selectedMedium by remember { mutableStateOf(mediums[0]) }
     var mediumReference by remember { mutableStateOf("") }
 
+    // Validation errors
+    var donorNameError by remember { mutableStateOf(false) }
+    var addressError by remember { mutableStateOf(false) }
+    var amountError by remember { mutableStateOf(false) }
+    var recipientNameError by remember { mutableStateOf(false) }
+    var recipientDesignationError by remember { mutableStateOf(false) }
+
     var showDialog by remember { mutableStateOf(false) }
 
-    println(currentMonth)
-    println(selectedMonth)
+    // Validation function
+    fun validateFields(): Boolean {
+        donorNameError = donorName.isBlank()
+        addressError = address.isBlank()
+        amountError = amount.isBlank() || amount.toDoubleOrNull() == null || amount.toDoubleOrNull()!! <= 0
+        recipientNameError = recipientName.isBlank()
+        recipientDesignationError = recipientDesignation.isBlank()
 
+        return !donorNameError && !addressError && !amountError && !recipientNameError && !recipientDesignationError
+    }
 
     Scaffold(
-        topBar = { AppBarComponent(
-            title = stringResource(R.string.add_receipt),
-            showBackButton = true,
-            onBackClick = { navController.popBackStack() }
-        ) }
+        topBar = {
+            AppBarComponent(
+                title = stringResource(R.string.add_receipt),
+                showBackButton = true,
+                onBackClick = { navController.popBackStack() }
+            )
+        },
+        floatingActionButton = {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Preview FAB
+                SmallFloatingActionButton(
+                    onClick = {
+                        if (validateFields()) {
+                            showDialog = true
+                        }
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Visibility,
+                        contentDescription = "Preview Receipt"
+                    )
+                }
+
+                // Save FAB
+                FloatingActionButton(
+                    onClick = {
+                        if (validateFields()) {
+                            val receipt = Receipt(
+                                donorName = donorName,
+                                address = address,
+                                month = months.indexOf(selectedMonth) + 1,
+                                amount = amount.toDoubleOrNull() ?: 0.0,
+                                recipientName = recipientName,
+                                recipientDesignation = recipientDesignation,
+                                medium = mediums.indexOf(selectedMedium) + 1,
+                                mediumReference = mediumReference,
+                                date = System.currentTimeMillis()
+                            )
+                            viewModel.saveReceipt(receipt)
+                            navController.popBackStack()
+                        }
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = stringResource(R.string.save)
+                    )
+                }
+            }
+        }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -76,19 +144,28 @@ fun AddReceiptScreen(navController: NavController) {
         ) {
             Text(text = stringResource(R.string.date) + ": $currentDate")
 
-
             CustomTextField(
                 value = donorName,
-                onValueChange = { donorName = it },
+                onValueChange = {
+                    donorName = it
+                    donorNameError = false
+                },
                 label = stringResource(R.string.donor_name),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                isError = donorNameError,
+                errorMessage = if (donorNameError) "Donor name is required" else null
             )
 
             CustomTextField(
                 value = address,
-                onValueChange = { address = it },
+                onValueChange = {
+                    address = it
+                    addressError = false
+                },
                 label = stringResource(R.string.address),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                isError = addressError,
+                errorMessage = if (addressError) "Address is required" else null
             )
 
             CustomDropdown(
@@ -101,24 +178,39 @@ fun AddReceiptScreen(navController: NavController) {
 
             CustomTextField(
                 value = amount,
-                onValueChange = { amount = it },
+                onValueChange = {
+                    amount = it
+                    amountError = false
+                },
                 label = stringResource(R.string.amount),
                 modifier = Modifier.fillMaxWidth(),
-                keyboardType = KeyboardType.Number
+                keyboardType = KeyboardType.Number,
+                isError = amountError,
+                errorMessage = if (amountError) "Valid amount is required" else null
             )
 
             CustomTextField(
                 value = recipientName,
-                onValueChange = { recipientName = it },
+                onValueChange = {
+                    recipientName = it
+                    recipientNameError = false
+                },
                 label = stringResource(R.string.recipient_name),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                isError = recipientNameError,
+                errorMessage = if (recipientNameError) "Recipient name is required" else null
             )
 
             CustomTextField(
                 value = recipientDesignation,
-                onValueChange = { recipientDesignation = it },
+                onValueChange = {
+                    recipientDesignation = it
+                    recipientDesignationError = false
+                },
                 label = stringResource(R.string.recipient_designation),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                isError = recipientDesignationError,
+                errorMessage = if (recipientDesignationError) "Recipient designation is required" else null
             )
 
             CustomDropdown(
@@ -136,34 +228,6 @@ fun AddReceiptScreen(navController: NavController) {
                     label = stringResource(R.string.medium_reference),
                     modifier = Modifier.fillMaxWidth()
                 )
-            }
-
-            Button(
-                onClick = { showDialog = true },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Preview Receipt")
-            }
-
-            Button(
-                onClick = {
-                    val receipt = Receipt(
-                        donorName = donorName,
-                        address = address,
-                        month = months.indexOf(selectedMonth) + 1,
-                        amount = amount.toDoubleOrNull() ?: 0.0,
-                        recipientName = recipientName,
-                        recipientDesignation = recipientDesignation,
-                        medium = mediums.indexOf(selectedMedium) + 1,
-                        mediumReference = mediumReference,
-                        date = System.currentTimeMillis()
-                    )
-                    viewModel.saveReceipt(receipt)
-                    navController.popBackStack()
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(stringResource(R.string.save))
             }
         }
     }

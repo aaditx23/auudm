@@ -1,6 +1,6 @@
 package com.aaditx23.auudm.presentation.screens.ListReceiptScreen
 
-import CustomTextField
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.aaditx23.auudm.R
 import com.aaditx23.auudm.presentation.components.AppBarComponent
+import com.aaditx23.auudm.presentation.components.CustomTextField
 import com.aaditx23.auudm.presentation.screens.ListReceiptScreen.components.ReceiptItem
 import org.koin.androidx.compose.koinViewModel
 

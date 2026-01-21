@@ -1,3 +1,4 @@
+package com.aaditx23.auudm.presentation.components
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -15,7 +16,9 @@ fun CustomTextField(
     label: String,
     modifier: Modifier = Modifier,
     keyboardType: KeyboardType = KeyboardType.Text,
-    singleLine: Boolean = true
+    singleLine: Boolean = true,
+    isError: Boolean = false,
+    errorMessage: String? = null
 ) {
     OutlinedTextField(
         value = value,
@@ -24,6 +27,10 @@ fun CustomTextField(
         modifier = modifier,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         singleLine = singleLine,
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(12.dp),
+        isError = isError,
+        supportingText = if (isError && errorMessage != null) {
+            { Text(errorMessage) }
+        } else null
     )
 }
