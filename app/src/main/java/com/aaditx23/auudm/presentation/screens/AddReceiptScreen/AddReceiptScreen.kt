@@ -2,7 +2,6 @@ package com.aaditx23.auudm.presentation.screens.AddReceiptScreen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,6 +34,7 @@ import com.aaditx23.auudm.presentation.components.CustomDropdown
 import com.aaditx23.auudm.presentation.components.CustomTextField
 import com.aaditx23.auudm.presentation.components.DigitalReceipt.DigitalReceiptDialog
 import com.aaditx23.auudm.presentation.util.Constants
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -67,7 +68,9 @@ fun AddReceiptScreen(navController: NavController) {
     var recipientDesignationError by remember { mutableStateOf(false) }
 
     var showDialog by remember { mutableStateOf(false) }
+    var savedReceipt by remember { mutableStateOf<Receipt?>(null) }
 
+    val scope = rememberCoroutineScope()
     // Validation function
     fun validateFields(): Boolean {
         donorNameError = donorName.isBlank()
@@ -77,6 +80,35 @@ fun AddReceiptScreen(navController: NavController) {
         recipientDesignationError = recipientDesignation.isBlank()
 
         return !donorNameError && !addressError && !amountError && !recipientNameError && !recipientDesignationError
+    }
+
+    // Save receipt and reset form function
+    suspend fun saveReceiptAndReset(): Receipt {
+        var receipt = Receipt(
+            donorName = donorName,
+            address = address,
+            month = months.indexOf(selectedMonth) + 1,
+            amount = amount.toDoubleOrNull() ?: 0.0,
+            recipientName = recipientName,
+            recipientDesignation = recipientDesignation,
+            medium = mediums.indexOf(selectedMedium) + 1,
+            mediumReference = mediumReference,
+            date = System.currentTimeMillis()
+        )
+        receipt = viewModel.saveReceipt(receipt)
+
+
+        // Reset form to defaults
+        donorName = ""
+        address = ""
+        selectedMonth = months[currentMonth - 1]
+        amount = ""
+        recipientName = ""
+        recipientDesignation = ""
+        selectedMedium = mediums[0]
+        mediumReference = ""
+
+        return receipt
     }
 
     Scaffold(
@@ -96,7 +128,10 @@ fun AddReceiptScreen(navController: NavController) {
                 SmallFloatingActionButton(
                     onClick = {
                         if (validateFields()) {
-                            showDialog = true
+                            scope.launch {
+                                savedReceipt = saveReceiptAndReset()
+                                showDialog = true
+                            }
                         }
                     }
                 ) {
@@ -110,19 +145,10 @@ fun AddReceiptScreen(navController: NavController) {
                 FloatingActionButton(
                     onClick = {
                         if (validateFields()) {
-                            val receipt = Receipt(
-                                donorName = donorName,
-                                address = address,
-                                month = months.indexOf(selectedMonth) + 1,
-                                amount = amount.toDoubleOrNull() ?: 0.0,
-                                recipientName = recipientName,
-                                recipientDesignation = recipientDesignation,
-                                medium = mediums.indexOf(selectedMedium) + 1,
-                                mediumReference = mediumReference,
-                                date = System.currentTimeMillis()
-                            )
-                            viewModel.saveReceipt(receipt)
-                            navController.popBackStack()
+                            scope.launch {
+                                saveReceiptAndReset()
+                                navController.popBackStack()
+                            }
                         }
                     }
                 ) {
@@ -232,20 +258,9 @@ fun AddReceiptScreen(navController: NavController) {
         }
     }
 
-    if (showDialog) {
+    if (showDialog && savedReceipt != null) {
         DigitalReceiptDialog(
-            receipt = Receipt(
-                id = 0, // Temporary for demo
-                donorName = donorName,
-                address = address,
-                month = months.indexOf(selectedMonth) + 1,
-                amount = amount.toDoubleOrNull() ?: 0.0,
-                recipientName = recipientName,
-                recipientDesignation = recipientDesignation,
-                medium = mediums.indexOf(selectedMedium) + 1,
-                mediumReference = mediumReference,
-                date = System.currentTimeMillis()
-            ),
+            receipt = savedReceipt!!,
             onDismiss = { showDialog = false }
         )
     }

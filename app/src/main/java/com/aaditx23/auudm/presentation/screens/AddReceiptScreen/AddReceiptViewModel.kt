@@ -10,9 +10,7 @@ class AddReceiptViewModel(
     private val saveReceiptUseCase: SaveReceiptUseCase
 ) : ViewModel() {
 
-    fun saveReceipt(receipt: Receipt) {
-        viewModelScope.launch {
-            saveReceiptUseCase(receipt)
-        }
+    suspend fun saveReceipt(receipt: Receipt): Receipt {
+        return saveReceiptUseCase(receipt)
     }
 }

@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface ReceiptRepository {
 
-    suspend fun saveReceipt(receipt: Receipt)
+    suspend fun saveReceipt(receipt: Receipt): Long
 
     fun getReceipts(): Flow<List<Receipt>>
 

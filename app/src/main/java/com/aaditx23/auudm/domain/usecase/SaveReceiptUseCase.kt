@@ -5,8 +5,9 @@ import com.aaditx23.auudm.domain.repository.ReceiptRepository
 
 class SaveReceiptUseCase(private val repository: ReceiptRepository) {
 
-    suspend operator fun invoke(receipt: Receipt) {
-        repository.saveReceipt(receipt)
+    suspend operator fun invoke(receipt: Receipt): Receipt {
+        val generatedId = repository.saveReceipt(receipt)
+        return receipt.copy(id = generatedId)
     }
 
 }

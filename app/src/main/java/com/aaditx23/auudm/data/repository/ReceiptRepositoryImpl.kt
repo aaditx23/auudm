@@ -12,9 +12,9 @@ class ReceiptRepositoryImpl(
     private val dao: ReceiptDao
 ) : ReceiptRepository {
 
-    override suspend fun saveReceipt(receipt: Receipt) {
+    override suspend fun saveReceipt(receipt: Receipt): Long {
         val entity = receipt.toEntity()
-        dao.insert(entity)
+        return dao.insert(entity)
     }
 
     override fun getReceipts(): Flow<List<Receipt>> {
