@@ -66,4 +66,11 @@
     <string name="donor_information">Donor Information</string>
     <string name="payment_details">Payment Details</string>
     <string name="recipient_information">Recipient Information</string>
+
+    <!-- Cloud Backup -->
+    <string name="cloud_backup">Cloud Backup</string>
+    <string name="firestore_backup">Firestore Backup</string>
+    <string name="firestore_backup_description">Sync all your receipts to Google Cloud Firestore for backup and access from multiple devices.</string>
+    <string name="sync_all_receipts">Sync All Receipts</string>
+    <string name="syncing">Syncing…</string>
 </resources>

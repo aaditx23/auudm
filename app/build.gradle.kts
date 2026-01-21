@@ -7,6 +7,8 @@ plugins {
     alias(libs.plugins.room)
     alias(libs.plugins.kotlinxSerialization)
 
+    id("com.google.gms.google-services")
+
 }
 
 room{
@@ -84,6 +86,11 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
 
     implementation(libs.androidx.datastore.preferences)
+
+    implementation(platform("com.google.firebase:firebase-bom:34.8.0"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-firestore")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.2")
 
 
 

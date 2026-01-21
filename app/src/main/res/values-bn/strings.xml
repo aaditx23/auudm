@@ -66,4 +66,11 @@
     <string name="donor_information">দাতার তথ্য</string>
     <string name="payment_details">পেমেন্ট বিবরণ</string>
     <string name="recipient_information">প্রাপকের তথ্য</string>
+
+    <!-- Cloud Backup -->
+    <string name="cloud_backup">ক্লাউড ব্যাকআপ</string>
+    <string name="firestore_backup">ফায়ারস্টোর ব্যাকআপ</string>
+    <string name="firestore_backup_description">আপনার সমস্ত রসিদ ব্যাকআপের জন্য এবং একাধিক ডিভাইস থেকে অ্যাক্সেসের জন্য গুগল ক্লাউড ফায়ারস্টোরে সিঙ্ক করুন।</string>
+    <string name="sync_all_receipts">সমস্ত রসিদ সিঙ্ক করুন</string>
+    <string name="syncing">সিঙ্ক হচ্ছে…</string>
 </resources>

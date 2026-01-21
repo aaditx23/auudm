@@ -12,4 +12,13 @@ interface ReceiptRepository {
     fun searchReceipts(query: String): Flow<List<Receipt>>
 
     fun getReceiptById(id: Long): Flow<Receipt>
+
+    // Firestore operations
+    suspend fun syncReceiptToFirestore(receipt: Receipt): Result<Unit>
+
+    suspend fun syncAllReceiptsToFirestore(): Result<Unit>
+
+    suspend fun deleteReceiptFromFirestore(id: Long): Result<Unit>
+
+    fun getReceiptsFromFirestore(): Flow<List<Receipt>>
 }

@@ -21,6 +21,7 @@ turbine = "1.1.0"
 mockk = "1.13.13"
 ktorClientMock = "3.3.3"
 datastore = "1.1.1"
+firebaseFirestoreKtx = "26.1.0"
 
 
 [libraries]
