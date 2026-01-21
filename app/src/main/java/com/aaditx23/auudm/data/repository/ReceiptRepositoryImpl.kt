@@ -72,4 +72,18 @@ class ReceiptRepositoryImpl(
             dtos.map { it.firestoreToDomain() }
         }
     }
+
+    override suspend fun syncAllFromFirestore(): Result<Unit> {
+        return try {
+            val receipts = firestoreDataSource.getAllReceipts().first().map { it.firestoreToDomain() }
+            // Clear local DB
+//            dao.deleteAll()
+            // Insert all
+            val entities = receipts.map { it.toEntity() }
+            dao.insertAll(entities)
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

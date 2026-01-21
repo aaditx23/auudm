@@ -59,7 +59,7 @@
     <string name="month_short">মাস:</string>
     <string name="medium_short">মাধ্যম:</string>
     <string name="amount_short">টাকা:</string>
-    <string name="recipient_signature">গ্রহণকারীর স্বাক্ষর:</string>
+    <string name="recipient_signature">গ্রহণকারী:</string>
     <string name="designation_label">পদ:</string>
 
     <!-- Receipt Details Screen -->

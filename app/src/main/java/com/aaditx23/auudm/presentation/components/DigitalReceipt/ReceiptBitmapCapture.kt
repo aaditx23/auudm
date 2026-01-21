@@ -28,8 +28,8 @@ fun ReceiptBitmapCapture(
     onBitmapReady: (Bitmap) -> Unit
 ) {
     // BACKGROUND IMAGE SIZE (SOURCE OF TRUTH)
-    val bgWidthPx = 5100
-    val bgHeightPx = 3722
+    val bgWidthPx = (5100 * 0.5).toInt()
+    val bgHeightPx = (3722 * 0.5).toInt()
 
     var captured by remember { mutableStateOf(false) }
 

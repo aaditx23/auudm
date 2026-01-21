@@ -21,4 +21,6 @@ interface ReceiptRepository {
     suspend fun deleteReceiptFromFirestore(id: Long): Result<Unit>
 
     fun getReceiptsFromFirestore(): Flow<List<Receipt>>
+
+    suspend fun syncAllFromFirestore(): Result<Unit>
 }

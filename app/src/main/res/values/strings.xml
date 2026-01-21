@@ -59,7 +59,7 @@
     <string name="month_short">Month:</string>
     <string name="medium_short">Medium:</string>
     <string name="amount_short">Amount:</string>
-    <string name="recipient_signature">Recipient\'s Signature:</string>
+    <string name="recipient_signature">Recipient:</string>
     <string name="designation_label">Designation:</string>
 
     <!-- Receipt Details Screen -->

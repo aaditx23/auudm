@@ -6,7 +6,8 @@ import kotlinx.coroutines.flow.Flow
 
 class GetReceiptsUseCase(private val repository: ReceiptRepository) {
 
-    operator fun invoke(): Flow<List<Receipt>> {
+    suspend operator fun invoke(): Flow<List<Receipt>> {
+        repository.syncAllFromFirestore().getOrThrow()
         return repository.getReceipts()
     }
 

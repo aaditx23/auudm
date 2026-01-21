@@ -13,6 +13,12 @@ interface ReceiptDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(receipt: ReceiptEntity): Long
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(receipts: List<ReceiptEntity>)
+
+    @Query("DELETE FROM receipts")
+    suspend fun deleteAll()
+
     @Query("SELECT * FROM receipts ORDER BY id DESC")
     fun getAllReceipts(): Flow<List<ReceiptEntity>>
 
