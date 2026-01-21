@@ -39,7 +39,7 @@
     <string name="bank">Bank</string>
     <string name="cash">Cash</string>
     <string name="receipt_no_label">Receipt No:</string>
-    <string name="donor">Donor:</string>
+    <string name="donor">Donor</string>
     <string name="amount_label">Amount:</string>
     <string name="date_label">Date:</string>
     <string name="month_label">Month:</string>
@@ -73,4 +73,11 @@
     <string name="firestore_backup_description">Sync all your receipts to Google Cloud Firestore for backup and access from multiple devices.</string>
     <string name="sync_all_receipts">Sync All Receipts</string>
     <string name="syncing">Syncing…</string>
+
+    <!-- Validation Errors -->
+    <string name="donor_name_required">Donor name is required</string>
+    <string name="address_required">Address is required</string>
+    <string name="amount_required">Valid amount is required</string>
+    <string name="recipient_name_required">Recipient name is required</string>
+    <string name="recipient_designation_required">Recipient designation is required</string>
 </resources>

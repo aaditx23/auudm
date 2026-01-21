@@ -39,7 +39,7 @@
     <string name="bank">ব্যাংক</string>
     <string name="cash">নগদ</string>
     <string name="receipt_no_label">রসিদ নং:</string>
-    <string name="donor">দাতা:</string>
+    <string name="donor">দাতা</string>
     <string name="amount_label">পরিমাণ:</string>
     <string name="date_label">তারিখ:</string>
     <string name="month_label">মাস:</string>
@@ -73,4 +73,11 @@
     <string name="firestore_backup_description">আপনার সমস্ত রসিদ ব্যাকআপের জন্য এবং একাধিক ডিভাইস থেকে অ্যাক্সেসের জন্য গুগল ক্লাউড ফায়ারস্টোরে সিঙ্ক করুন।</string>
     <string name="sync_all_receipts">সমস্ত রসিদ সিঙ্ক করুন</string>
     <string name="syncing">সিঙ্ক হচ্ছে…</string>
+
+    <!-- Validation Errors -->
+    <string name="donor_name_required">দাতার নাম প্রয়োজন</string>
+    <string name="address_required">ঠিকানা প্রয়োজন</string>
+    <string name="amount_required">বৈধ পরিমাণ প্রয়োজন</string>
+    <string name="recipient_name_required">প্রাপকের নাম প্রয়োজন</string>
+    <string name="recipient_designation_required">প্রাপকের পদবী প্রয়োজন</string>
 </resources>

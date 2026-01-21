@@ -11,37 +11,44 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+
 class ReceiptListViewModel(
     private val getReceiptsUseCase: GetReceiptsUseCase,
     private val searchReceiptsUseCase: SearchReceiptsUseCase
 ) : ViewModel() {
 
-    private val _receipts = MutableStateFlow<List<Receipt>>(emptyList())
-    val receipts: StateFlow<List<Receipt>> = _receipts.asStateFlow()
-
-    private val _searchQuery = MutableStateFlow("")
-    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+    private val _uiState = MutableStateFlow(ReceiptListUiState())
+    val uiState: StateFlow<ReceiptListUiState> = _uiState.asStateFlow()
 
     init {
         getReceipts()
     }
 
     private fun getReceipts() {
+        _uiState.value = _uiState.value.copy(isLoading = true, error = null)
         viewModelScope.launch {
-            getReceiptsUseCase().collectLatest { receipts ->
-                _receipts.value = receipts
+            try {
+                getReceiptsUseCase().collectLatest { receipts ->
+                    _uiState.value = _uiState.value.copy(receipts = receipts, isLoading = false)
+                }
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(isLoading = false, error = e.message)
             }
         }
     }
 
     fun searchReceipts(query: String) {
-        _searchQuery.value = query
+        _uiState.value = _uiState.value.copy(searchQuery = query, isLoading = true, error = null)
         if (query.isBlank()) {
             getReceipts()
         } else {
             viewModelScope.launch {
-                searchReceiptsUseCase(query).collectLatest { receipts ->
-                    _receipts.value = receipts
+                try {
+                    searchReceiptsUseCase(query).collectLatest { receipts ->
+                        _uiState.value = _uiState.value.copy(receipts = receipts, isLoading = false)
+                    }
+                } catch (e: Exception) {
+                    _uiState.value = _uiState.value.copy(isLoading = false, error = e.message)
                 }
             }
         }

@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -19,9 +20,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -43,7 +43,7 @@ import java.util.Locale
 @Composable
 fun ReceiptDetailsScreen(navController: NavController, receiptId: Long) {
     val viewModel: ReceiptDetailsViewModel = koinViewModel { parametersOf(receiptId) }
-    val receipt by viewModel.receipt.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
     val numberFormat = remember { NumberFormat.getInstance(Locale.getDefault()) }
     val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
@@ -51,22 +51,18 @@ fun ReceiptDetailsScreen(navController: NavController, receiptId: Long) {
     val months = Constants.MONTH_IDS.map { stringResource(it) }
     val mediums = Constants.MEDIUM_IDS.map { stringResource(it) }
 
-    var showDialog by remember { mutableStateOf(false) }
-
-    receipt?.let { receiptData ->
-        val date = dateFormat.format(Date(receiptData.date))
-
-        Scaffold(
-            topBar = {
-                AppBarComponent(
-                    title = stringResource(R.string.receipt_details),
-                    showBackButton = true,
-                    onBackClick = { navController.popBackStack() }
-                )
-            },
-            floatingActionButton = {
+    Scaffold(
+        topBar = {
+            AppBarComponent(
+                title = stringResource(R.string.receipt_details),
+                showBackButton = true,
+                onBackClick = { navController.popBackStack() }
+            )
+        },
+        floatingActionButton = {
+            if (uiState.receipt != null) {
                 FloatingActionButton(
-                    onClick = { showDialog = true }
+                    onClick = { viewModel.showDialog() }
                 ) {
                     Icon(
                         imageVector = Icons.Default.Visibility,
@@ -74,15 +70,36 @@ fun ReceiptDetailsScreen(navController: NavController, receiptId: Long) {
                     )
                 }
             }
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
-                    .padding(16.dp)
-                    .verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            if (uiState.isLoading) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    CircularProgressIndicator()
+                }
+            } else if (uiState.error != null) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(text = uiState.error ?: "Unknown error")
+                }
+            } else if (uiState.receipt != null) {
+                val receiptData = uiState.receipt!!
+                val date = dateFormat.format(Date(receiptData.date))
+
                 // Receipt Number Card
                 InfoCard(
                     label = stringResource(R.string.receipt_no_label),
@@ -142,17 +159,17 @@ fun ReceiptDetailsScreen(navController: NavController, receiptId: Long) {
                         )
 
                         InfoRow(
-                            label = stringResource(R.string.amount_label),
+                            label = stringResource(R.string.amount),
                             value = numberFormat.format(receiptData.amount)
                         )
 
                         InfoRow(
-                            label = stringResource(R.string.month_label),
+                            label = stringResource(R.string.month),
                             value = months.getOrNull(receiptData.month - 1) ?: "Unknown"
                         )
 
                         InfoRow(
-                            label = stringResource(R.string.medium_label),
+                            label = stringResource(R.string.medium),
                             value = mediums.getOrNull(receiptData.medium - 1) ?: "Unknown"
                         )
 
@@ -164,7 +181,7 @@ fun ReceiptDetailsScreen(navController: NavController, receiptId: Long) {
                         }
 
                         InfoRow(
-                            label = stringResource(R.string.date_label),
+                            label = stringResource(R.string.date),
                             value = date
                         )
                     }
@@ -203,13 +220,12 @@ fun ReceiptDetailsScreen(navController: NavController, receiptId: Long) {
                 }
             }
         }
+    }
 
-        if (showDialog) {
-            DigitalReceiptDialog(
-                receipt = receiptData,
-                onDismiss = { showDialog = false }
-            )
-        }
+    if (uiState.showDialog && uiState.receipt != null) {
+        DigitalReceiptDialog(
+            receipt = uiState.receipt!!,
+            onDismiss = { viewModel.dismissDialog() }
+        )
     }
 }
-

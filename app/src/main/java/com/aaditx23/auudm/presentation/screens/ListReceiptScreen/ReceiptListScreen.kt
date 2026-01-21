@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -17,6 +18,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -30,8 +32,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun ReceiptListScreen(navController: NavController) {
     val viewModel: ReceiptListViewModel = koinViewModel()
-    val receipts by viewModel.receipts.collectAsState()
-    val searchQuery by viewModel.searchQuery.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = { AppBarComponent(title = stringResource(R.string.receipts_list)) },
@@ -49,24 +50,42 @@ fun ReceiptListScreen(navController: NavController) {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             CustomTextField(
-                value = searchQuery,
+                value = uiState.searchQuery,
                 onValueChange = { viewModel.searchReceipts(it) },
                 label = stringResource(R.string.search),
                 modifier = Modifier.fillMaxWidth()
             )
 
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(receipts) { receipt ->
-                    ReceiptItem(receipt, navController)
+            if (uiState.isLoading) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    CircularProgressIndicator()
                 }
-            }
+            } else if (uiState.error != null) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(text = uiState.error ?: "Unknown error")
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(uiState.receipts) { receipt ->
+                        ReceiptItem(receipt, navController)
+                    }
+                }
 
-            if (receipts.isEmpty()) {
-                Text(stringResource(R.string.no_receipts))
+                if (uiState.receipts.isEmpty()) {
+                    Text(stringResource(R.string.no_receipts))
+                }
             }
         }
     }

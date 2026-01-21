@@ -16,11 +16,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -28,7 +27,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.aaditx23.auudm.R
-import com.aaditx23.auudm.domain.model.Receipt
 import com.aaditx23.auudm.presentation.components.AppBarComponent
 import com.aaditx23.auudm.presentation.components.CustomDropdown
 import com.aaditx23.auudm.presentation.components.CustomTextField
@@ -44,6 +42,7 @@ import java.util.Locale
 @Composable
 fun AddReceiptScreen(navController: NavController) {
     val viewModel: AddReceiptViewModel = koinViewModel()
+    val uiState by viewModel.uiState.collectAsState()
 
     val months = Constants.MONTH_IDS.map { stringResource(it) }
     val mediums = Constants.MEDIUM_IDS.map { stringResource(it) }
@@ -51,64 +50,11 @@ fun AddReceiptScreen(navController: NavController) {
     val currentDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
     val currentMonth = Calendar.getInstance().get(Calendar.MONTH) + 1
 
-    var donorName by remember { mutableStateOf("") }
-    var address by remember { mutableStateOf("") }
-    var selectedMonth by remember { mutableStateOf(months[currentMonth - 1]) }
-    var amount by remember { mutableStateOf("") }
-    var recipientName by remember { mutableStateOf("") }
-    var recipientDesignation by remember { mutableStateOf("") }
-    var selectedMedium by remember { mutableStateOf(mediums[0]) }
-    var mediumReference by remember { mutableStateOf("") }
-
-    // Validation errors
-    var donorNameError by remember { mutableStateOf(false) }
-    var addressError by remember { mutableStateOf(false) }
-    var amountError by remember { mutableStateOf(false) }
-    var recipientNameError by remember { mutableStateOf(false) }
-    var recipientDesignationError by remember { mutableStateOf(false) }
-
-    var showDialog by remember { mutableStateOf(false) }
-    var savedReceipt by remember { mutableStateOf<Receipt?>(null) }
-
     val scope = rememberCoroutineScope()
-    // Validation function
-    fun validateFields(): Boolean {
-        donorNameError = donorName.isBlank()
-        addressError = address.isBlank()
-        amountError = amount.isBlank() || amount.toDoubleOrNull() == null || amount.toDoubleOrNull()!! <= 0
-        recipientNameError = recipientName.isBlank()
-        recipientDesignationError = recipientDesignation.isBlank()
 
-        return !donorNameError && !addressError && !amountError && !recipientNameError && !recipientDesignationError
-    }
-
-    // Save receipt and reset form function
-    suspend fun saveReceiptAndReset(): Receipt {
-        var receipt = Receipt(
-            donorName = donorName,
-            address = address,
-            month = months.indexOf(selectedMonth) + 1,
-            amount = amount.toDoubleOrNull() ?: 0.0,
-            recipientName = recipientName,
-            recipientDesignation = recipientDesignation,
-            medium = mediums.indexOf(selectedMedium) + 1,
-            mediumReference = mediumReference,
-            date = System.currentTimeMillis()
-        )
-        receipt = viewModel.saveReceipt(receipt)
-
-
-        // Reset form to defaults
-        donorName = ""
-        address = ""
-        selectedMonth = months[currentMonth - 1]
-        amount = ""
-        recipientName = ""
-        recipientDesignation = ""
-        selectedMedium = mediums[0]
-        mediumReference = ""
-
-        return receipt
+    LaunchedEffect(Unit) {
+        viewModel.updateSelectedMonth(months[currentMonth - 1])
+        viewModel.updateSelectedMedium(mediums[0])
     }
 
     Scaffold(
@@ -127,10 +73,10 @@ fun AddReceiptScreen(navController: NavController) {
                 // Preview FAB
                 SmallFloatingActionButton(
                     onClick = {
-                        if (validateFields()) {
+                        if (viewModel.validateFields()) {
                             scope.launch {
-                                savedReceipt = saveReceiptAndReset()
-                                showDialog = true
+                                val receipt = viewModel.saveReceipt(months, mediums)
+                                viewModel.showDialog(receipt)
                             }
                         }
                     }
@@ -144,9 +90,10 @@ fun AddReceiptScreen(navController: NavController) {
                 // Save FAB
                 FloatingActionButton(
                     onClick = {
-                        if (validateFields()) {
+                        if (viewModel.validateFields()) {
                             scope.launch {
-                                saveReceiptAndReset()
+                                viewModel.saveReceipt(months, mediums)
+                                viewModel.resetForm(months[currentMonth - 1], mediums[0])
                                 navController.popBackStack()
                             }
                         }
@@ -171,86 +118,71 @@ fun AddReceiptScreen(navController: NavController) {
             Text(text = stringResource(R.string.date) + ": $currentDate")
 
             CustomTextField(
-                value = donorName,
-                onValueChange = {
-                    donorName = it
-                    donorNameError = false
-                },
+                value = uiState.donorName,
+                onValueChange = { viewModel.updateDonorName(it) },
                 label = stringResource(R.string.donor_name),
                 modifier = Modifier.fillMaxWidth(),
-                isError = donorNameError,
-                errorMessage = if (donorNameError) "Donor name is required" else null
+                isError = uiState.donorNameError,
+                errorMessage = if (uiState.donorNameError) stringResource(R.string.donor_name_required) else null
             )
 
             CustomTextField(
-                value = address,
-                onValueChange = {
-                    address = it
-                    addressError = false
-                },
+                value = uiState.address,
+                onValueChange = { viewModel.updateAddress(it) },
                 label = stringResource(R.string.address),
                 modifier = Modifier.fillMaxWidth(),
-                isError = addressError,
-                errorMessage = if (addressError) "Address is required" else null
+                isError = uiState.addressError,
+                errorMessage = if (uiState.addressError) stringResource(R.string.address_required) else null
             )
 
             CustomDropdown(
                 list = months,
-                selected = selectedMonth,
-                onSelect = { selectedMonth = it },
+                selected = uiState.selectedMonth,
+                onSelect = { viewModel.updateSelectedMonth(it) },
                 label = stringResource(R.string.select_month),
                 modifier = Modifier.fillMaxWidth()
             )
 
             CustomTextField(
-                value = amount,
-                onValueChange = {
-                    amount = it
-                    amountError = false
-                },
+                value = uiState.amount,
+                onValueChange = { viewModel.updateAmount(it) },
                 label = stringResource(R.string.amount),
                 modifier = Modifier.fillMaxWidth(),
                 keyboardType = KeyboardType.Number,
-                isError = amountError,
-                errorMessage = if (amountError) "Valid amount is required" else null
+                isError = uiState.amountError,
+                errorMessage = if (uiState.amountError) stringResource(R.string.amount_required) else null
             )
 
             CustomTextField(
-                value = recipientName,
-                onValueChange = {
-                    recipientName = it
-                    recipientNameError = false
-                },
+                value = uiState.recipientName,
+                onValueChange = { viewModel.updateRecipientName(it) },
                 label = stringResource(R.string.recipient_name),
                 modifier = Modifier.fillMaxWidth(),
-                isError = recipientNameError,
-                errorMessage = if (recipientNameError) "Recipient name is required" else null
+                isError = uiState.recipientNameError,
+                errorMessage = if (uiState.recipientNameError) stringResource(R.string.recipient_name_required) else null
             )
 
             CustomTextField(
-                value = recipientDesignation,
-                onValueChange = {
-                    recipientDesignation = it
-                    recipientDesignationError = false
-                },
+                value = uiState.recipientDesignation,
+                onValueChange = { viewModel.updateRecipientDesignation(it) },
                 label = stringResource(R.string.recipient_designation),
                 modifier = Modifier.fillMaxWidth(),
-                isError = recipientDesignationError,
-                errorMessage = if (recipientDesignationError) "Recipient designation is required" else null
+                isError = uiState.recipientDesignationError,
+                errorMessage = if (uiState.recipientDesignationError) stringResource(R.string.recipient_designation_required) else null
             )
 
             CustomDropdown(
                 list = mediums,
-                selected = selectedMedium,
-                onSelect = { selectedMedium = it },
+                selected = uiState.selectedMedium,
+                onSelect = { viewModel.updateSelectedMedium(it) },
                 label = stringResource(R.string.select_medium),
                 modifier = Modifier.fillMaxWidth()
             )
 
-            if (selectedMedium != stringResource(R.string.cash)) {
+            if (uiState.selectedMedium != stringResource(R.string.cash)) {
                 CustomTextField(
-                    value = mediumReference,
-                    onValueChange = { mediumReference = it },
+                    value = uiState.mediumReference,
+                    onValueChange = { viewModel.updateMediumReference(it) },
                     label = stringResource(R.string.medium_reference),
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -258,10 +190,10 @@ fun AddReceiptScreen(navController: NavController) {
         }
     }
 
-    if (showDialog && savedReceipt != null) {
+    if (uiState.showDialog && uiState.savedReceipt != null) {
         DigitalReceiptDialog(
-            receipt = savedReceipt!!,
-            onDismiss = { showDialog = false }
+            receipt = uiState.savedReceipt!!,
+            onDismiss = { viewModel.dismissDialog() }
         )
     }
 }
