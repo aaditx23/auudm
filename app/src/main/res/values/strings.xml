@@ -46,4 +46,19 @@
     <string name="medium_label">Medium:</string>
     <string name="reference">Reference:</string>
     <string name="receipt_details">Receipt Details</string>
+
+    <!-- Digital Receipt -->
+    <string name="receipt_header">Amir Ul Uloom Deeniya Madrasa</string>
+    <string name="receipt_title">Donation Receipt</string>
+    <string name="receipt_subtitle">(Donor\'s Copy)</string>
+    <string name="receipt_footer">May Allah accept your donation as Sadaqah Jariyah — Ameen</string>
+    <string name="receipt_no_short">Receipt No:</string>
+    <string name="date_short">Date:</string>
+    <string name="donor_name_label">Donor Name:</string>
+    <string name="address_label">Address:</string>
+    <string name="month_short">Month:</string>
+    <string name="medium_short">Medium:</string>
+    <string name="amount_short">Amount:</string>
+    <string name="recipient_signature">Recipient\'s Signature:</string>
+    <string name="designation_label">Designation:</string>
 </resources>

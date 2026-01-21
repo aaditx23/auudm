@@ -12,17 +12,20 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aaditx23.auudm.R
 import com.aaditx23.auudm.domain.model.Receipt
+import com.aaditx23.auudm.presentation.util.Constants
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -32,21 +35,39 @@ fun DigitalReceipt(
     receipt: Receipt,
     modifier: Modifier = Modifier
 ) {
+    // Load string resources
+    val headerText = stringResource(R.string.receipt_header)
+    val titleText = stringResource(R.string.receipt_title)
+    val subtitleText = stringResource(R.string.receipt_subtitle)
+    val footerText = stringResource(R.string.receipt_footer)
+
+    val receiptNoLabel = stringResource(R.string.receipt_no_short)
+    val dateLabel = stringResource(R.string.date_short)
+    val donorNameLabel = stringResource(R.string.donor_name_label)
+    val addressLabel = stringResource(R.string.address_label)
+    val monthLabel = stringResource(R.string.month_short)
+    val mediumLabel = stringResource(R.string.medium_short)
+    val amountLabel = stringResource(R.string.amount_short)
+    val recipientSignatureLabel = stringResource(R.string.recipient_signature)
+    val designationLabel = stringResource(R.string.designation_label)
+
+    // Load month and medium resources
+    val months = Constants.MONTH_IDS.map { stringResource(it) }
+    val mediums = Constants.MEDIUM_IDS.map { stringResource(it) }
+
+    // Date formatter
+    val dateFormat = remember { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
+    val formattedDate = remember(receipt.date) { dateFormat.format(Date(receipt.date)) }
+    val monthName = months.getOrNull(receipt.month - 1) ?: ""
+    val mediumName = mediums.getOrNull(receipt.medium - 1) ?: ""
+
     BoxWithConstraints(
-        modifier = modifier
-            .fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     ) {
-
-
-
         val width = maxWidth
-
-        // Scale factor based on your design image width
-        // Suppose original image was designed at 1080px width
-        val scale = width / 320.dp   // adjust if needed
+        val scale = width / 320.dp
 
         Box {
-
             // Background Image
             Image(
                 painter = painterResource(id = R.drawable.receipt_bg),
@@ -60,7 +81,7 @@ fun DigitalReceipt(
             ======================== */
 
             Text(
-                text = "আমির উল উলুম দ্বীনিয়া মাদ্রাসা",
+                text = headerText,
                 fontSize = (18.sp * scale),
                 fontWeight = FontWeight.W900,
                 modifier = Modifier
@@ -75,13 +96,13 @@ fun DigitalReceipt(
                     .offset(y = 42.dp * scale)
             ) {
                 Text(
-                    text = "অনুদান রসিদ",
+                    text = titleText,
                     fontSize = (12.sp * scale),
                     fontWeight = FontWeight.W600,
                     color = Color.Black
                 )
                 Text(
-                    text = " (দাতার অংশ)",
+                    text = " $subtitleText",
                     fontSize = (12.sp * scale),
                     fontStyle = FontStyle.Italic,
                     color = Color.Black
@@ -100,59 +121,59 @@ fun DigitalReceipt(
             ) {
                 Row(modifier = Modifier.fillMaxWidth()) {
                     ReceiptText(
-                        label = "রসিদ নং:",
+                        label = receiptNoLabel,
                         text = receipt.id.toString(),
                         scale = scale
                     )
                     Spacer(Modifier.weight(1f))
                     ReceiptText(
-                        label = "তারিখ:",
-                        text = formatDate(receipt.date),
+                        label = dateLabel,
+                        text = formattedDate,
                         scale = scale
                     )
                 }
                 Spacer(Modifier.height(0.dp))
                 ReceiptText(
-                    label = "দাতার নাম:",
+                    label = donorNameLabel,
                     text = receipt.donorName,
                     scale = scale
                 )
                 Spacer(Modifier.height(0.dp))
                 ReceiptText(
-                    label = "ঠিকানা:",
+                    label = addressLabel,
                     text = receipt.address,
                     scale = scale
                 )
                 Spacer(Modifier.height(0.dp))
                 ReceiptText(
-                    label = "মাস:",
-                    text = getMonthString(receipt.month),
+                    label = monthLabel,
+                    text = monthName,
                     scale = scale
                 )
                 Spacer(Modifier.height(0.dp))
                 Row(modifier = Modifier.fillMaxWidth()) {
                     ReceiptText(
-                        label = "মাধ্যম:",
-                        text = getMediumString(receipt.medium),
+                        label = mediumLabel,
+                        text = mediumName,
                         scale = scale
                     )
                     Spacer(Modifier.weight(1f))
                     ReceiptText(
-                        label = "টাকা:",
-                        text = "${receipt.amount}",
+                        label = amountLabel,
+                        text = receipt.amount.toString(),
                         scale = scale
                     )
                 }
                 Spacer(Modifier.height(0.dp))
                 Row(modifier = Modifier.fillMaxWidth()) {
                     ReceiptText(
-                        label = "গ্রহণকারীর স্বাক্ষর:",
+                        label = recipientSignatureLabel,
                         text = receipt.recipientName,
                         scale = scale
                     )
                     Spacer(Modifier.weight(1f))
                     ReceiptText(
-                        label = "পদ:",
+                        label = designationLabel,
                         text = receipt.recipientDesignation,
                         scale = scale
                     )
@@ -164,36 +185,11 @@ fun DigitalReceipt(
             ======================== */
 
             Text(
-                text = "আল্লাহ তায়ালা আপনার দান সদকায়ে জারিয়া হিসেবে কবুল করুন — আমিন",
+                text = footerText,
                 fontSize = (6.sp),
-                modifier = Modifier
-                    .align(Alignment.BottomCenter),
+                modifier = Modifier.align(Alignment.BottomCenter),
                 color = Color.Black
-//                    .offset(y = (-16).dp * scale),
-
             )
         }
     }
-}
-
-private fun formatDate(timestamp: Long): String {
-    val outputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-    return outputFormat.format(Date(timestamp))
-}
-
-private fun getMediumString(medium: Int): String {
-    return when (medium) {
-        1 -> "বিকাশ"
-        2 -> "ব্যাংক"
-        3 -> "নগদ"
-        else -> ""
-    }
-}
-
-private fun getMonthString(month: Int): String {
-    val months = listOf(
-        "জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন",
-        "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"
-    )
-    return months.getOrNull(month - 1) ?: ""
 }

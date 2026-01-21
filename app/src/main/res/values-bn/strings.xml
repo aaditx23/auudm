@@ -46,4 +46,19 @@
     <string name="medium_label">মাধ্যম:</string>
     <string name="reference">রেফারেন্স:</string>
     <string name="receipt_details">রসিদের বিস্তারিত</string>
+
+    <!-- Digital Receipt -->
+    <string name="receipt_header">আমির উল উলুম দ্বীনিয়া মাদ্রাসা</string>
+    <string name="receipt_title">অনুদান রসিদ</string>
+    <string name="receipt_subtitle">(দাতার অংশ)</string>
+    <string name="receipt_footer">আল্লাহ তায়ালা আপনার দান সদকায়ে জারিয়া হিসেবে কবুল করুন — আমিন</string>
+    <string name="receipt_no_short">রসিদ নং:</string>
+    <string name="date_short">তারিখ:</string>
+    <string name="donor_name_label">দাতার নাম:</string>
+    <string name="address_label">ঠিকানা:</string>
+    <string name="month_short">মাস:</string>
+    <string name="medium_short">মাধ্যম:</string>
+    <string name="amount_short">টাকা:</string>
+    <string name="recipient_signature">গ্রহণকারীর স্বাক্ষর:</string>
+    <string name="designation_label">পদ:</string>
 </resources>
