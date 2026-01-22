@@ -114,7 +114,7 @@ fun SettingsScreen(
                         onCheckedChange = {
                             darkMode = it
                             settingsDataStore.setDarkMode(it)
-                            (context as? androidx.activity.ComponentActivity)?.recreate()
+                            // No recreate() needed! Theme updates automatically via Flow
                         }
                     )
                 }
@@ -124,12 +124,12 @@ fun SettingsScreen(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(80.dp)
-                    .clickable {
-                        selectedLanguage = if (selectedLanguage == "en") "bn" else "en"
-                        settingsDataStore.setLanguage(selectedLanguage)
-                        (context as? androidx.activity.ComponentActivity)?.recreate()
-                    }
+                    .height(80.dp),
+                onClick = {
+                    selectedLanguage = if (selectedLanguage == "en") "bn" else "en"
+                    settingsDataStore.setLanguage(selectedLanguage)
+                    // No recreate() needed! Locale updates automatically via Flow
+                }
             ) {
                 Row(
                     modifier = Modifier
