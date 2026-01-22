@@ -18,9 +18,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -30,8 +33,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
+import com.aaditx23.auudm.R
 import com.aaditx23.auudm.domain.model.Receipt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -45,6 +50,17 @@ fun DigitalReceiptDialog(
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+
+    // Load string resources
+    val saveText = stringResource(R.string.save)
+    val shareText = stringResource(R.string.share)
+    val closeText = stringResource(R.string.close)
+    val generatingText = stringResource(R.string.generating_receipt)
+    val savedText = stringResource(R.string.receipt_saved)
+    val saveFailedText = stringResource(R.string.receipt_save_failed)
+    val shareFailedText = stringResource(R.string.receipt_share_failed)
+    val shareTitle = stringResource(R.string.share_receipt_title)
+
 
     var bitmap by remember { mutableStateOf<Bitmap?>(null) }
     var startCapture by remember { mutableStateOf(false) }
@@ -82,11 +98,11 @@ fun DigitalReceiptDialog(
             }
 
             withContext(Dispatchers.Main) {
-                Toast.makeText(context, "Receipt saved to Pictures", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, savedText, Toast.LENGTH_SHORT).show()
             }
         } catch (e: Exception) {
             withContext(Dispatchers.Main) {
-                Toast.makeText(context, "Failed to save: ${e.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, String.format(saveFailedText, e.message), Toast.LENGTH_LONG).show()
             }
         } finally {
             isSaving = false
@@ -119,11 +135,11 @@ fun DigitalReceiptDialog(
                     putExtra(Intent.EXTRA_STREAM, uri)
                     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 }
-                context.startActivity(Intent.createChooser(intent, "Share Receipt"))
+                context.startActivity(Intent.createChooser(intent, shareTitle))
             }
         } catch (e: Exception) {
             withContext(Dispatchers.Main) {
-                Toast.makeText(context, "Failed to share: ${e.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, String.format(shareFailedText, e.message), Toast.LENGTH_LONG).show()
             }
         } finally {
             isSharing = false
@@ -134,10 +150,8 @@ fun DigitalReceiptDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
+                modifier = Modifier,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 Button(
                     onClick = {
@@ -156,7 +170,7 @@ fun DigitalReceiptDialog(
                             color = MaterialTheme.colorScheme.onPrimary
                         )
                     } else {
-                        Text("Save")
+                        Text(saveText)
                     }
                 }
 
@@ -177,19 +191,19 @@ fun DigitalReceiptDialog(
                             color = MaterialTheme.colorScheme.onPrimary
                         )
                     } else {
-                        Text("Share")
+                        Text(shareText)
                     }
-                }
-
-                Button(
-                    onClick = onDismiss,
-                    enabled = !isSaving && !isSharing
-                ) {
-                    Text("Close")
                 }
             }
         },
-        dismissButton = {},
+        dismissButton = {
+            TextButton(
+                onClick = onDismiss,
+                enabled = !isSaving && !isSharing
+            ) {
+                Text(closeText)
+            }
+        },
         title = null,
         text = {
             Column(
@@ -197,7 +211,7 @@ fun DigitalReceiptDialog(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 if (bitmap == null) {
-                    Text("Generating receipt…")
+                    Text(generatingText)
                 } else {
                     Image(
                         bitmap = bitmap!!.asImageBitmap(),

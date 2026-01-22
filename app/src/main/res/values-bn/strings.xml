@@ -97,8 +97,16 @@
     <!-- Filters -->
     <string name="filter">ফিল্টার</string>
     <string name="filter_receipts">রসিদ ফিল্টার করুন</string>
-    <string name="apply_filter">প্রয়োগ করুন</string>
+    <string name="apply_filter">প্রয়োগ</string>
     <string name="clear_filter">মুছুন</string>
     <string name="close">বন্ধ করুন</string>
     <string name="all">সব</string>
+
+    <!-- Receipt Dialog -->
+    <string name="share">শেয়ার</string>
+    <string name="generating_receipt">রসিদ তৈরি হচ্ছে…</string>
+    <string name="receipt_saved">রসিদ সংরক্ষিত হয়েছে</string>
+    <string name="receipt_save_failed">সংরক্ষণ ব্যর্থ: %s</string>
+    <string name="receipt_share_failed">শেয়ার ব্যর্থ: %s</string>
+    <string name="share_receipt_title">রসিদ শেয়ার করুন</string>
 </resources>

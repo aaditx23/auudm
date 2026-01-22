@@ -101,4 +101,12 @@
     <string name="clear_filter">Clear</string>
     <string name="close">Close</string>
     <string name="all">All</string>
+
+    <!-- Receipt Dialog -->
+    <string name="share">Share</string>
+    <string name="generating_receipt">Generating receipt…</string>
+    <string name="receipt_saved">Receipt saved to Pictures</string>
+    <string name="receipt_save_failed">Failed to save: %s</string>
+    <string name="receipt_share_failed">Failed to share: %s</string>
+    <string name="share_receipt_title">Share Receipt</string>
 </resources>

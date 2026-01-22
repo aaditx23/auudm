@@ -128,7 +128,7 @@ fun SettingsScreen(
                 onClick = {
                     selectedLanguage = if (selectedLanguage == "en") "bn" else "en"
                     settingsDataStore.setLanguage(selectedLanguage)
-                    // No recreate() needed! Locale updates automatically via Flow
+                    // Language updates automatically via flow observation in MainActivity
                 }
             ) {
                 Row(
