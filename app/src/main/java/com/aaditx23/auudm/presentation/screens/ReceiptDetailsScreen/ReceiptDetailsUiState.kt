@@ -6,5 +6,8 @@ data class ReceiptDetailsUiState(
     val receipt: Receipt? = null,
     val isLoading: Boolean = true,
     val error: String? = null,
-    val showDialog: Boolean = false
+    val showDialog: Boolean = false,
+    val showDeleteConfirmation: Boolean = false,
+    val isDeleting: Boolean = false,
+    val deleteError: String? = null
 )

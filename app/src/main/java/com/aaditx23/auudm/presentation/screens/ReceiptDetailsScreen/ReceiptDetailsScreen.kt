@@ -2,12 +2,19 @@ package com.aaditx23.auudm.presentation.screens.ReceiptDetailsScreen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsIgnoringVisibility
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -15,9 +22,14 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -30,6 +42,7 @@ import androidx.navigation.NavController
 import com.aaditx23.auudm.R
 import com.aaditx23.auudm.presentation.components.AppBarComponent
 import com.aaditx23.auudm.presentation.components.DigitalReceipt.DigitalReceiptDialog
+import com.aaditx23.auudm.presentation.screens.ReceiptDetailsScreen.components.DeleteConfirmationDialog
 import com.aaditx23.auudm.presentation.screens.ReceiptDetailsScreen.components.InfoCard
 import com.aaditx23.auudm.presentation.screens.ReceiptDetailsScreen.components.InfoRow
 import com.aaditx23.auudm.presentation.util.Constants
@@ -40,10 +53,13 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ReceiptDetailsScreen(navController: NavController, receiptId: String) {
     val viewModel: ReceiptDetailsViewModel = koinViewModel { parametersOf(receiptId) }
     val uiState by viewModel.uiState.collectAsState()
+
+    val snackbarHostState = remember { SnackbarHostState() }
 
     val numberFormat = remember { NumberFormat.getInstance(Locale.getDefault()) }
     val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
@@ -51,7 +67,22 @@ fun ReceiptDetailsScreen(navController: NavController, receiptId: String) {
     val months = Constants.MONTH_IDS.map { stringResource(it) }
     val mediums = Constants.MEDIUM_IDS.map { stringResource(it) }
 
+    // Handle delete error
+    LaunchedEffect(uiState.deleteError) {
+        uiState.deleteError?.let { error ->
+            val message = if (error == "delete_no_network") {
+                navController.context.getString(R.string.delete_no_network)
+            } else {
+                navController.context.getString(R.string.delete_failed) + " $error"
+            }
+            snackbarHostState.showSnackbar(message)
+            viewModel.clearDeleteError()
+        }
+    }
+
     Scaffold(
+
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             AppBarComponent(
                 title = stringResource(R.string.receipt_details),
@@ -218,8 +249,46 @@ fun ReceiptDetailsScreen(navController: NavController, receiptId: String) {
                         )
                     }
                 }
+
+                // Delete Button
+                Spacer(modifier = Modifier.height(16.dp))
+                OutlinedButton(
+                    onClick = { viewModel.showDeleteConfirmation() },
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = !uiState.isDeleting
+                ) {
+                    if (uiState.isDeleting) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .height(20.dp)
+                                .width(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Delete"
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                    }
+                    Text(stringResource(R.string.delete_receipt))
+                }
             }
         }
+    }
+
+    // Delete Confirmation Dialog
+    if (uiState.showDeleteConfirmation) {
+        DeleteConfirmationDialog(
+            onConfirm = {
+                viewModel.dismissDeleteConfirmation()
+                viewModel.deleteReceipt {
+                    navController.popBackStack()
+                }
+            },
+            onDismiss = { viewModel.dismissDeleteConfirmation() },
+            isDeleting = uiState.isDeleting
+        )
     }
 
     if (uiState.showDialog && uiState.receipt != null) {

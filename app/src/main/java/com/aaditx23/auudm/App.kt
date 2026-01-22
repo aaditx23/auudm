@@ -1,5 +1,7 @@
 package com.aaditx23.auudm
 
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -21,6 +23,7 @@ import com.aaditx23.auudm.presentation.screens.ListReceiptScreen.ReceiptListScre
 import com.aaditx23.auudm.presentation.screens.SettingsScreen.SettingsScreen
 import com.aaditx23.auudm.presentation.screens.ReceiptDetailsScreen.ReceiptDetailsScreen
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun App() {
     val navController = rememberNavController()
@@ -31,6 +34,8 @@ fun App() {
     )
 
     Scaffold(
+        modifier = Modifier
+            .fillMaxSize(),
         bottomBar = {
             NavigationBar {
                 val navBackStackEntry = navController.currentBackStackEntryAsState().value
@@ -57,7 +62,7 @@ fun App() {
         NavHost(
             navController = navController,
             startDestination = Screen.ListReceipts.route,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding())
         ) {
             composable(Screen.AddReceipt.route) { AddReceiptScreen(navController) }
             composable(Screen.ListReceipts.route) { ReceiptListScreen(navController) }

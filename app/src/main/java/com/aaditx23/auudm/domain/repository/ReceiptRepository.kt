@@ -7,6 +7,8 @@ interface ReceiptRepository {
 
     suspend fun saveReceipt(receipt: Receipt): String
 
+    suspend fun deleteReceipt(id: String): Result<Unit>
+
     fun getReceipts(): Flow<List<Receipt>>
 
     fun searchReceipts(query: String): Flow<List<Receipt>>

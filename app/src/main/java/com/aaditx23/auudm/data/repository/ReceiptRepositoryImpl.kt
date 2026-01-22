@@ -23,6 +23,19 @@ class ReceiptRepositoryImpl(
         return receipt.id
     }
 
+    override suspend fun deleteReceipt(id: String): Result<Unit> {
+        return try {
+            // Delete from Firestore
+            firestoreDataSource.deleteReceipt(id)
+            // Delete from local DB
+            dao.deleteById(id)
+
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     override fun getReceipts(): Flow<List<Receipt>> {
         return dao.getAllReceipts().map { entities ->
             entities.map { it.toDomain() }

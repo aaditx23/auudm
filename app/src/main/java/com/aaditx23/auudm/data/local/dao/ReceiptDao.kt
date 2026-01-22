@@ -19,6 +19,9 @@ interface ReceiptDao {
     @Query("DELETE FROM receipts")
     suspend fun deleteAll()
 
+    @Query("DELETE FROM receipts WHERE id = :id")
+    suspend fun deleteById(id: String)
+
     @Query("SELECT * FROM receipts ORDER BY id DESC")
     fun getAllReceipts(): Flow<List<ReceiptEntity>>
 

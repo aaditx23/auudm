@@ -24,6 +24,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
         setContent {
             // Observe dark mode from DataStore Flow - reactive!
             val darkMode by settingsDataStore.darkModeFlow.collectAsState(initial = settingsDataStore.getDarkMode())

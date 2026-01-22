@@ -99,8 +99,16 @@
     <string name="filter_receipts">Filter Receipts</string>
     <string name="apply_filter">Apply</string>
     <string name="clear_filter">Clear</string>
-    <string name="close">Close</string>
-    <string name="all">All</string>
+
+    <!-- Delete -->
+    <string name="delete">Delete</string>
+    <string name="delete_receipt">Delete Receipt</string>
+    <string name="delete_confirmation">Are you sure you want to delete this receipt?</string>
+    <string name="delete_success">Receipt deleted successfully</string>
+    <string name="delete_failed">Failed to delete receipt:</string>
+    <string name="delete_no_network">Cannot delete receipt without internet connection</string>
+    <string name="confirm_delete">Confirm Delete</string>
+
 
     <!-- Receipt Dialog -->
     <string name="share">Share</string>
@@ -109,4 +117,6 @@
     <string name="receipt_save_failed">Failed to save: %s</string>
     <string name="receipt_share_failed">Failed to share: %s</string>
     <string name="share_receipt_title">Share Receipt</string>
+    <string name="close">Close</string>
+    <string name="all">All</string>
 </resources>

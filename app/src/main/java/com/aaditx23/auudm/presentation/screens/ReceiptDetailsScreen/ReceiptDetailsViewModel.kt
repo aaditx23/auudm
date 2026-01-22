@@ -2,6 +2,8 @@ package com.aaditx23.auudm.presentation.screens.ReceiptDetailsScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aaditx23.auudm.data.NetworkMonitor
+import com.aaditx23.auudm.domain.usecase.DeleteReceiptUseCase
 import com.aaditx23.auudm.domain.usecase.GetReceiptByIdUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -10,6 +12,8 @@ import kotlinx.coroutines.launch
 
 class ReceiptDetailsViewModel(
     private val getReceiptByIdUseCase: GetReceiptByIdUseCase,
+    private val deleteReceiptUseCase: DeleteReceiptUseCase,
+    private val networkMonitor: NetworkMonitor,
     private val receiptId: String
 ) : ViewModel() {
 
@@ -45,5 +49,49 @@ class ReceiptDetailsViewModel(
 
     fun dismissDialog() {
         _uiState.value = _uiState.value.copy(showDialog = false)
+    }
+
+    fun showDeleteConfirmation() {
+        _uiState.value = _uiState.value.copy(showDeleteConfirmation = true)
+    }
+
+    fun dismissDeleteConfirmation() {
+        _uiState.value = _uiState.value.copy(showDeleteConfirmation = false)
+    }
+
+    fun deleteReceipt(onSuccess: () -> Unit) {
+        if (!networkMonitor.isNetworkAvailable()) {
+            _uiState.value = _uiState.value.copy(
+                deleteError = "delete_no_network"
+            )
+            return
+        }
+
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isDeleting = true, deleteError = null)
+            try {
+                deleteReceiptUseCase(receiptId).onSuccess {
+                    _uiState.value = _uiState.value.copy(
+                        isDeleting = false,
+                        showDeleteConfirmation = false
+                    )
+                    onSuccess()
+                }.onFailure { error ->
+                    _uiState.value = _uiState.value.copy(
+                        isDeleting = false,
+                        deleteError = error.message
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    isDeleting = false,
+                    deleteError = e.message
+                )
+            }
+        }
+    }
+
+    fun clearDeleteError() {
+        _uiState.value = _uiState.value.copy(deleteError = null)
     }
 }

@@ -10,6 +10,7 @@ import com.aaditx23.auudm.domain.repository.ReceiptRepository
 import com.aaditx23.auudm.domain.usecase.GetReceiptByIdUseCase
 import com.aaditx23.auudm.domain.usecase.GetReceiptsUseCase
 import com.aaditx23.auudm.domain.usecase.SaveReceiptUseCase
+import com.aaditx23.auudm.domain.usecase.DeleteReceiptUseCase
 import com.aaditx23.auudm.domain.usecase.SearchReceiptsUseCase
 import com.aaditx23.auudm.domain.usecase.SearchReceiptsWithFiltersUseCase
 import com.aaditx23.auudm.domain.usecase.SyncReceiptToFirestoreUseCase
@@ -52,6 +53,7 @@ val appModule = module {
 
     // UseCases
     factoryOf(::SaveReceiptUseCase)
+    factoryOf(::DeleteReceiptUseCase)
     factoryOf(::GetReceiptsUseCase)
     factoryOf(::GetReceiptByIdUseCase)
     factoryOf(::SearchReceiptsUseCase)

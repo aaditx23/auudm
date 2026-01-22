@@ -99,8 +99,16 @@
     <string name="filter_receipts">রসিদ ফিল্টার করুন</string>
     <string name="apply_filter">প্রয়োগ</string>
     <string name="clear_filter">মুছুন</string>
-    <string name="close">বন্ধ করুন</string>
-    <string name="all">সব</string>
+
+    <!-- Delete -->
+    <string name="delete">মুছুন</string>
+    <string name="delete_receipt">রসিদ মুছুন</string>
+    <string name="delete_confirmation">আপনি কি এই রসিদটি মুছতে চান?</string>
+    <string name="delete_success">রসিদ সফলভাবে মুছে ফেলা হয়েছে</string>
+    <string name="delete_failed">রসিদ মুছতে ব্যর্থ:</string>
+    <string name="delete_no_network">ইন্টারনেট সংযোগ ছাড়া রসিদ মুছতে পারবেন না</string>
+    <string name="confirm_delete">মুছুন নিশ্চিত করুন</string>
+
 
     <!-- Receipt Dialog -->
     <string name="share">শেয়ার</string>
@@ -109,4 +117,6 @@
     <string name="receipt_save_failed">সংরক্ষণ ব্যর্থ: %s</string>
     <string name="receipt_share_failed">শেয়ার ব্যর্থ: %s</string>
     <string name="share_receipt_title">রসিদ শেয়ার করুন</string>
+    <string name="close">বন্ধ করুন</string>
+    <string name="all">সব</string>
 </resources>
