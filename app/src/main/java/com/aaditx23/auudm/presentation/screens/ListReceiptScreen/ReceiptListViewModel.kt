@@ -155,7 +155,8 @@ class ReceiptListViewModel(
 
                 list.forEach { receipt ->
                     Log.d(TAG,"syncFromNetwork: Saving receipt - ID: ${receipt.id}, Donor: ${receipt.donorName}")
-                    saveReceiptsUseCase(receipt = receipt)
+                    // Mark as synced since it's coming from Firestore
+                    saveReceiptsUseCase(receipt = receipt.copy(isSynced = true))
                 }
                 Log.d(TAG, "syncFromNetwork: All receipts saved to local DB")
 

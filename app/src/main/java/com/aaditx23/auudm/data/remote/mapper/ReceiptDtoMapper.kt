@@ -13,7 +13,8 @@ fun Receipt.toDto() = ReceiptDto(
     recipientDesignation = recipientDesignation,
     medium = medium,
     mediumReference = mediumReference,
-    date = date
+    date = date,
+    isSynced = true  // Always true when uploading to Firestore
 )
 
 fun ReceiptDto.toDomain() = Receipt(
@@ -26,6 +27,7 @@ fun ReceiptDto.toDomain() = Receipt(
     recipientDesignation = recipientDesignation,
     medium = medium,
     mediumReference = mediumReference,
-    date = date
+    date = date,
+    isSynced = isSynced
 )
 

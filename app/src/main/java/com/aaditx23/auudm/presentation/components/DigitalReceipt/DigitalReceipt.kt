@@ -122,7 +122,7 @@ fun DigitalReceipt(
                 Row(modifier = Modifier.fillMaxWidth()) {
                     ReceiptText(
                         label = receiptNoLabel,
-                        text = receipt.id.takeLast(4),
+                        text = "...${receipt.id.takeLast(4)}",
                         scale = scale
                     )
                     Spacer(Modifier.weight(1f))

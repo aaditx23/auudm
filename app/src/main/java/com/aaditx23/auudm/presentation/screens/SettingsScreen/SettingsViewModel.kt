@@ -65,7 +65,8 @@ class SettingsViewModel(
                 Log.d(TAG, "syncAll: Step 3 - Saving receipts to local DB")
                 receipts.forEach { receipt ->
                     Log.d(TAG, "syncAll: Saving receipt ID: ${receipt.id}, Donor: ${receipt.donorName}")
-                    saveReceiptUseCase(receipt)
+                    // Mark as synced since it's coming from Firestore
+                    saveReceiptUseCase(receipt.copy(isSynced = true))
                 }
                 Log.d(TAG, "syncAll: Step 3 completed - All receipts saved to local DB")
 

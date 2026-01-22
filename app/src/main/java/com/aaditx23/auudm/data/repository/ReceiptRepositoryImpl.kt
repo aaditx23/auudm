@@ -52,7 +52,12 @@ class ReceiptRepositoryImpl(
     // Firestore operations
     override suspend fun syncReceiptToFirestore(receipt: Receipt): Result<Unit> {
         return try {
-            firestoreDataSource.saveReceipt(receipt.toDto())
+            val result = firestoreDataSource.saveReceipt(receipt.toDto())
+            if (result.isSuccess) {
+                // Mark as synced after successful upload
+                dao.updateSyncStatus(receipt.id, true)
+            }
+            result
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -83,9 +88,10 @@ class ReceiptRepositoryImpl(
 
     override suspend fun syncAllFromFirestore(): Result<Unit> {
         return try {
-            val receipts = firestoreDataSource.getAllReceipts().first().map { it.firestoreToDomain() }
-            // Clear local DB
-//            dao.deleteAll()
+            val receipts = firestoreDataSource.getAllReceipts().first().map {
+                // Ensure receipts from Firestore are marked as synced
+                it.firestoreToDomain().copy(isSynced = true)
+            }
             // Insert all
             val entities = receipts.map { it.toEntity() }
             dao.insertAll(entities)

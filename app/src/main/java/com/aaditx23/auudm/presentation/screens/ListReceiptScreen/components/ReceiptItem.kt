@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CloudDone
+import androidx.compose.material.icons.filled.CloudQueue
 import androidx.compose.material.icons.filled.Print
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -76,12 +78,27 @@ fun ReceiptItem(receipt: Receipt, navController: NavController) {
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                     )
-                    Text(
-                        text = "#...${receipt.id.takeLast(4)}",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = "#...${receipt.id.takeLast(4)}",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        // Sync Status Indicator
+                        Icon(
+                            imageVector = if (receipt.isSynced) Icons.Filled.CloudDone else Icons.Filled.CloudQueue,
+                            contentDescription = if (receipt.isSynced) "Synced" else "Pending Sync",
+                            tint = if (receipt.isSynced)
+                                MaterialTheme.colorScheme.tertiary
+                            else
+                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
                 }
 
                 IconButton(
