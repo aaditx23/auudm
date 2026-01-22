@@ -3,18 +3,24 @@ package com.aaditx23.auudm.presentation.screens.ListReceiptScreen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Wifi
+import androidx.compose.material.icons.filled.WifiOff
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -35,7 +41,29 @@ fun ReceiptListScreen(navController: NavController) {
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
-        topBar = { AppBarComponent(title = stringResource(R.string.receipts_list)) },
+        topBar = {
+            AppBarComponent(
+                title = stringResource(R.string.receipts_list),
+                actions = {
+                    if (uiState.isSyncing) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            strokeWidth = 2.dp,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                    }
+                    else{
+                        Icon(
+                            imageVector = if (uiState.isOnline) Icons.Filled.Wifi else Icons.Filled.WifiOff,
+                            contentDescription = if (uiState.isOnline) "Online" else "Offline",
+                            tint = if (uiState.isOnline) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
+                        )
+                    }
+
+                }
+            )
+        },
         floatingActionButton = {
             FloatingActionButton(onClick = { navController.navigate("add_receipt") }) {
                 Icon(Icons.Filled.Add, contentDescription = "Add Receipt")
@@ -49,6 +77,7 @@ fun ReceiptListScreen(navController: NavController) {
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+
             CustomTextField(
                 value = uiState.searchQuery,
                 onValueChange = { viewModel.searchReceipts(it) },
@@ -72,6 +101,18 @@ fun ReceiptListScreen(navController: NavController) {
                 ) {
                     Text(text = uiState.error ?: "Unknown error")
                 }
+            } else if (uiState.receipts.isEmpty()) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = stringResource(R.string.no_receipts),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             } else {
                 LazyColumn(
                     modifier = Modifier
@@ -81,10 +122,6 @@ fun ReceiptListScreen(navController: NavController) {
                     items(uiState.receipts) { receipt ->
                         ReceiptItem(receipt, navController)
                     }
-                }
-
-                if (uiState.receipts.isEmpty()) {
-                    Text(stringResource(R.string.no_receipts))
                 }
             }
         }

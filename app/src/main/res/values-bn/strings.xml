@@ -85,6 +85,8 @@
     <string name="sync_all_success">সমস্ত রসিদ ক্লাউডে সিঙ্ক হয়েছে!</string>
     <string name="sync_pending_success">অপেক্ষমান রসিদ সিঙ্ক হয়েছে!</string>
     <string name="sync_failed">সিঙ্ক ব্যর্থ:</string>
+    <string name="online">অনলাইন</string>
+    <string name="offline">অফলাইন</string>
 
     <!-- Pending Sync -->
     <string name="sync_pending_receipts">অপেক্ষমান রসিদ সিঙ্ক করুন</string>

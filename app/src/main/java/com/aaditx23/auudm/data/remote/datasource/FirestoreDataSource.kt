@@ -1,5 +1,6 @@
 package com.aaditx23.auudm.data.remote.datasource
 
+import android.util.Log
 import com.aaditx23.auudm.data.remote.model.ReceiptDto
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose
@@ -12,6 +13,7 @@ class FirestoreDataSource(
 ) {
     companion object {
         private const val RECEIPTS_COLLECTION = "receipts"
+        private const val TAG = "FirestoreDataSource"
     }
 
     /**
@@ -36,25 +38,48 @@ class FirestoreDataSource(
      * @return Flow of list of receipts
      */
     fun getAllReceipts(): Flow<List<ReceiptDto>> = callbackFlow {
+        Log.d(TAG, "getAllReceipts: Setting up Firestore listener")
         val subscription = firestore.collection(RECEIPTS_COLLECTION)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
+                    Log.e(TAG, "getAllReceipts: Error listening to Firestore", error)
                     close(error)
                     return@addSnapshotListener
                 }
 
+                Log.d(TAG, "getAllReceipts: Snapshot received, null=${snapshot == null}")
+                Log.d(TAG, "getAllReceipts: Document count=${snapshot?.documents?.size ?: 0}")
+
                 val receipts = snapshot?.documents?.mapNotNull { document ->
                     try {
-                        document.toObject(ReceiptDto::class.java)
+                        Log.d(TAG, "getAllReceipts: Processing document ID=${document.id}")
+                        Log.d(TAG, "getAllReceipts: Document data=${document.data}")
+                        val receipt = document.toObject(ReceiptDto::class.java)
+                        if (receipt != null) {
+                            // Ensure the ID is set from the document ID if it's empty
+                            if (receipt.id.isEmpty()) {
+                                receipt.id = document.id
+                                Log.d(TAG, "getAllReceipts: Set document ID to receipt")
+                            }
+                            Log.d(TAG, "getAllReceipts: Successfully parsed receipt ID=${receipt.id}")
+                        } else {
+                            Log.w(TAG, "getAllReceipts: Failed to parse document ID=${document.id}")
+                        }
+                        receipt
                     } catch (e: Exception) {
+                        Log.e(TAG, "getAllReceipts: Exception parsing document ID=${document.id}", e)
                         null
                     }
                 } ?: emptyList()
 
+                Log.d(TAG, "getAllReceipts: Sending ${receipts.size} receipts through flow")
                 trySend(receipts)
             }
 
-        awaitClose { subscription.remove() }
+        awaitClose {
+            Log.d(TAG, "getAllReceipts: Closing Firestore listener")
+            subscription.remove()
+        }
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.aaditx23.auudm.presentation.screens.ListReceiptScreen
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aaditx23.auudm.data.NetworkMonitor
@@ -7,10 +8,12 @@ import com.aaditx23.auudm.domain.usecase.GetReceiptsUseCase
 import com.aaditx23.auudm.domain.usecase.SearchReceiptsUseCase
 import com.aaditx23.auudm.domain.usecase.SyncPendingReceiptsUseCase
 import com.aaditx23.auudm.domain.usecase.GetReceiptsFromFirestoreUseCase
+import com.aaditx23.auudm.domain.usecase.SaveReceiptUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 
@@ -18,19 +21,17 @@ class ReceiptListViewModel(
     private val getReceiptsUseCase: GetReceiptsUseCase,
     private val searchReceiptsUseCase: SearchReceiptsUseCase,
     private val syncPendingReceiptsUseCase: SyncPendingReceiptsUseCase,
-    private val syncAllReceiptsUseCase: SyncPendingReceiptsUseCase,
     private val getReceiptsFromFirestoreUseCase: GetReceiptsFromFirestoreUseCase,
+    private val saveReceiptsUseCase: SaveReceiptUseCase,
     private val networkMonitor: NetworkMonitor
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ReceiptListUiState())
     val uiState: StateFlow<ReceiptListUiState> = _uiState.asStateFlow()
 
-    private var hasSyncedOnNetwork = false
-
     init {
-        getReceipts()
         observeNetwork()
+        getReceipts()
     }
 
     private fun getReceipts() {
@@ -38,7 +39,7 @@ class ReceiptListViewModel(
         viewModelScope.launch {
             try {
                 if (networkMonitor.isNetworkAvailable()) {
-                    syncAllReceiptsUseCase()
+                    syncFromNetwork()
                 }
                 getReceiptsUseCase().collectLatest { receipts ->
                     _uiState.value = _uiState.value.copy(receipts = receipts, isLoading = false)
@@ -51,17 +52,20 @@ class ReceiptListViewModel(
 
     fun searchReceipts(query: String) {
         _uiState.value = _uiState.value.copy(searchQuery = query, isLoading = true, error = null)
-        if (query.isBlank()) {
-            getReceipts()
-        } else {
-            viewModelScope.launch {
-                try {
+        viewModelScope.launch {
+            try {
+                if (query.isBlank()) {
+                    // Just load from local DB without syncing
+                    getReceiptsUseCase().collectLatest { receipts ->
+                        _uiState.value = _uiState.value.copy(receipts = receipts, isLoading = false)
+                    }
+                } else {
                     searchReceiptsUseCase(query).collectLatest { receipts ->
                         _uiState.value = _uiState.value.copy(receipts = receipts, isLoading = false)
                     }
-                } catch (e: Exception) {
-                    _uiState.value = _uiState.value.copy(isLoading = false, error = e.message)
                 }
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(isLoading = false, error = e.message)
             }
         }
     }
@@ -69,27 +73,53 @@ class ReceiptListViewModel(
     private fun observeNetwork() {
         viewModelScope.launch {
             networkMonitor.observeNetworkState().collect { isOnline ->
-                if (isOnline && !hasSyncedOnNetwork) {
-                    syncReceipts()
-                    hasSyncedOnNetwork = true
-                } else if (!isOnline) {
-                    hasSyncedOnNetwork = false
+                val wasOffline = !_uiState.value.isOnline
+                _uiState.value = _uiState.value.copy(isOnline = isOnline)
+
+                // If network just came online from offline state, sync
+                if (isOnline && wasOffline) {
+                    syncFromNetwork()
                 }
             }
         }
     }
 
-    private fun syncReceipts() {
+    private fun syncFromNetwork() {
         viewModelScope.launch {
-            syncPendingReceiptsUseCase().onFailure {
-                // Handle push error if needed
-            }
+            Log.d(TAG, "syncFromNetwork: Starting sync process")
+            _uiState.value = _uiState.value.copy(isSyncing = true)
             try {
-                getReceiptsFromFirestoreUseCase().collect { }
+                // First: Push pending receipts to Firestore
+                Log.d(TAG, "syncFromNetwork: Pushing pending receipts to Firestore")
+                syncPendingReceiptsUseCase().onFailure { error ->
+                    Log.e(TAG, "syncFromNetwork: Failed to push pending receipts", error)
+                }.onSuccess {
+                    Log.d(TAG, "syncFromNetwork: Successfully pushed pending receipts")
+                }
+
+                // Second: Get all entries from Firestore (use first() to get single emission)
+                Log.d(TAG, "syncFromNetwork: Pulling receipts from Firestore")
+                val list = getReceiptsFromFirestoreUseCase().first()
+                Log.d(TAG, "syncFromNetwork: Successfully pulled ${list.size} receipts from Firestore")
+                Log.d(TAG, "syncFromNetwork: Receipts data: $list")
+
+                list.forEach { receipt ->
+                    Log.d(TAG,"syncFromNetwork: Saving receipt - ID: ${receipt.id}, Donor: ${receipt.donorName}")
+                    saveReceiptsUseCase(receipt = receipt)
+                }
+                Log.d(TAG, "syncFromNetwork: All receipts saved to local DB")
+
             } catch (e: Exception) {
-                // Handle pull error if needed
+                Log.e(TAG, "syncFromNetwork: Error during sync", e)
+                Log.e(TAG, "syncFromNetwork: Exception details: ${e.message}", e)
+            } finally {
+                Log.d(TAG, "syncFromNetwork: Sync process completed")
+                _uiState.value = _uiState.value.copy(isSyncing = false)
             }
-            // After sync, the local db is updated, and getReceipts() will collect the latest
         }
+    }
+
+    companion object {
+        private const val TAG = "ReceiptListViewModel"
     }
 }

@@ -77,7 +77,7 @@ fun ReceiptItem(receipt: Receipt, navController: NavController) {
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                     )
                     Text(
-                        text = "#${receipt.id}",
+                        text = "#...${receipt.id.takeLast(4)}",
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary

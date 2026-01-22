@@ -85,6 +85,8 @@
     <string name="sync_all_success">All receipts synced to cloud successfully!</string>
     <string name="sync_pending_success">Pending receipts synced successfully!</string>
     <string name="sync_failed">Sync failed:</string>
+    <string name="online">Online</string>
+    <string name="offline">Offline</string>
 
     <!-- Pending Sync -->
     <string name="sync_pending_receipts">Sync Pending Receipts</string>

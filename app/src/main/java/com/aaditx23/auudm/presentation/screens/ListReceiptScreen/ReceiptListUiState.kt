@@ -6,5 +6,7 @@ data class ReceiptListUiState(
     val receipts: List<Receipt> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null,
-    val searchQuery: String = ""
+    val searchQuery: String = "",
+    val isOnline: Boolean = false,
+    val isSyncing: Boolean = false
 )
