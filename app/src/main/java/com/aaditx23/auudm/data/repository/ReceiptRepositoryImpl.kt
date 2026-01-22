@@ -35,6 +35,16 @@ class ReceiptRepositoryImpl(
         }
     }
 
+    override fun searchReceiptsWithFilters(
+        query: String,
+        month: Int?,
+        medium: Int?
+    ): Flow<List<Receipt>> {
+        return dao.searchReceiptsWithFilters(query, month, medium).map { entities ->
+            entities.map { it.toDomain() }
+        }
+    }
+
     override fun getReceiptById(id: String): Flow<Receipt> {
         return dao.getReceiptById(id).map { it.toDomain() }
     }

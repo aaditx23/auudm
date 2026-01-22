@@ -11,6 +11,12 @@ interface ReceiptRepository {
 
     fun searchReceipts(query: String): Flow<List<Receipt>>
 
+    fun searchReceiptsWithFilters(
+        query: String,
+        month: Int?,
+        medium: Int?
+    ): Flow<List<Receipt>>
+
     fun getReceiptById(id: String): Flow<Receipt>
 
     // Firestore operations

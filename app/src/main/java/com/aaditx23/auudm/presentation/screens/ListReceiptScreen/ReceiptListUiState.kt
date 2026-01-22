@@ -8,5 +8,8 @@ data class ReceiptListUiState(
     val error: String? = null,
     val searchQuery: String = "",
     val isOnline: Boolean = false,
-    val isSyncing: Boolean = false
+    val isSyncing: Boolean = false,
+    val filterMonth: Int? = null, // null means no filter
+    val filterMedium: Int? = null, // null means no filter
+    val isFilterDialogOpen: Boolean = false
 )

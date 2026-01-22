@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.aaditx23.auudm.data.NetworkMonitor
 import com.aaditx23.auudm.domain.usecase.GetReceiptsUseCase
 import com.aaditx23.auudm.domain.usecase.SearchReceiptsUseCase
+import com.aaditx23.auudm.domain.usecase.SearchReceiptsWithFiltersUseCase
 import com.aaditx23.auudm.domain.usecase.SyncPendingReceiptsUseCase
 import com.aaditx23.auudm.domain.usecase.GetReceiptsFromFirestoreUseCase
 import com.aaditx23.auudm.domain.usecase.SaveReceiptUseCase
@@ -20,6 +21,7 @@ import kotlinx.coroutines.launch
 class ReceiptListViewModel(
     private val getReceiptsUseCase: GetReceiptsUseCase,
     private val searchReceiptsUseCase: SearchReceiptsUseCase,
+    private val searchReceiptsWithFiltersUseCase: SearchReceiptsWithFiltersUseCase,
     private val syncPendingReceiptsUseCase: SyncPendingReceiptsUseCase,
     private val getReceiptsFromFirestoreUseCase: GetReceiptsFromFirestoreUseCase,
     private val saveReceiptsUseCase: SaveReceiptUseCase,
@@ -54,20 +56,68 @@ class ReceiptListViewModel(
         _uiState.value = _uiState.value.copy(searchQuery = query, isLoading = true, error = null)
         viewModelScope.launch {
             try {
-                if (query.isBlank()) {
-                    // Just load from local DB without syncing
-                    getReceiptsUseCase().collectLatest { receipts ->
-                        _uiState.value = _uiState.value.copy(receipts = receipts, isLoading = false)
-                    }
-                } else {
-                    searchReceiptsUseCase(query).collectLatest { receipts ->
-                        _uiState.value = _uiState.value.copy(receipts = receipts, isLoading = false)
-                    }
+                // Use searchReceiptsWithFiltersUseCase for all searches (with or without filters)
+                searchReceiptsWithFiltersUseCase(
+                    query = query,
+                    month = _uiState.value.filterMonth,
+                    medium = _uiState.value.filterMedium
+                ).collectLatest { receipts ->
+                    _uiState.value = _uiState.value.copy(receipts = receipts, isLoading = false)
                 }
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(isLoading = false, error = e.message)
             }
         }
+    }
+
+    fun applyFilters(month: Int?, medium: Int?) {
+        _uiState.value = _uiState.value.copy(
+            filterMonth = month,
+            filterMedium = medium,
+            isLoading = true
+        )
+        // Reapply search with new filters
+        viewModelScope.launch {
+            try {
+                searchReceiptsWithFiltersUseCase(
+                    query = _uiState.value.searchQuery,
+                    month = month,
+                    medium = medium
+                ).collectLatest { receipts ->
+                    _uiState.value = _uiState.value.copy(receipts = receipts, isLoading = false)
+                }
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(isLoading = false, error = e.message)
+            }
+        }
+    }
+
+    fun clearFilters() {
+        _uiState.value = _uiState.value.copy(
+            filterMonth = null,
+            filterMedium = null,
+            isLoading = true
+        )
+        // Reapply search without filters
+        viewModelScope.launch {
+            try {
+                searchReceiptsWithFiltersUseCase(
+                    query = _uiState.value.searchQuery,
+                    month = null,
+                    medium = null
+                ).collectLatest { receipts ->
+                    _uiState.value = _uiState.value.copy(receipts = receipts, isLoading = false)
+                }
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(isLoading = false, error = e.message)
+            }
+        }
+    }
+
+    fun toggleFilterDialog() {
+        _uiState.value = _uiState.value.copy(
+            isFilterDialogOpen = !_uiState.value.isFilterDialogOpen
+        )
     }
 
     private fun observeNetwork() {

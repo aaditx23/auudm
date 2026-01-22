@@ -3,6 +3,7 @@ package com.aaditx23.auudm.presentation.screens.ListReceiptScreen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,11 +14,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.material.icons.filled.WifiOff
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -32,6 +35,7 @@ import androidx.navigation.NavController
 import com.aaditx23.auudm.R
 import com.aaditx23.auudm.presentation.components.AppBarComponent
 import com.aaditx23.auudm.presentation.components.CustomTextField
+import com.aaditx23.auudm.presentation.screens.ListReceiptScreen.components.FilterDialog
 import com.aaditx23.auudm.presentation.screens.ListReceiptScreen.components.ReceiptItem
 import org.koin.androidx.compose.koinViewModel
 
@@ -78,12 +82,31 @@ fun ReceiptListScreen(navController: NavController) {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 
-            CustomTextField(
-                value = uiState.searchQuery,
-                onValueChange = { viewModel.searchReceipts(it) },
-                label = stringResource(R.string.search),
-                modifier = Modifier.fillMaxWidth()
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                CustomTextField(
+                    value = uiState.searchQuery,
+                    onValueChange = { viewModel.searchReceipts(it) },
+                    label = stringResource(R.string.search),
+                    modifier = Modifier.weight(1f)
+                )
+
+                IconButton(
+                    onClick = { viewModel.toggleFilterDialog() }
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.FilterList,
+                        contentDescription = stringResource(R.string.filter),
+                        tint = if (uiState.filterMonth != null || uiState.filterMedium != null)
+                            MaterialTheme.colorScheme.primary
+                        else
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
 
             if (uiState.isLoading) {
                 Column(
@@ -124,6 +147,23 @@ fun ReceiptListScreen(navController: NavController) {
                     }
                 }
             }
+        }
+
+        // Filter Dialog
+        if (uiState.isFilterDialogOpen) {
+            FilterDialog(
+                currentMonth = uiState.filterMonth,
+                currentMedium = uiState.filterMedium,
+                onApplyFilter = { month, medium ->
+                    viewModel.applyFilters(month, medium)
+                },
+                onClearFilter = {
+                    viewModel.clearFilters()
+                },
+                onDismiss = {
+                    viewModel.toggleFilterDialog()
+                }
+            )
         }
     }
 }

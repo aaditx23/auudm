@@ -71,6 +71,7 @@
     <string name="cloud_backup">Cloud Backup</string>
     <string name="firestore_backup">Firestore Backup</string>
     <string name="firestore_backup_description">Sync all your receipts to Google Cloud Firestore for backup and access from multiple devices.</string>
+    <string name="sync_all_description">Complete sync: Push pending receipts to cloud, then pull all receipts from cloud to your device.</string>
     <string name="sync_all_receipts">Sync All Receipts</string>
     <string name="syncing">Syncing…</string>
 
@@ -92,4 +93,12 @@
     <string name="sync_pending_receipts">Sync Pending Receipts</string>
     <string name="sync_pending_description">Sync receipts that were created offline and haven\'t been uploaded yet.</string>
     <string name="sync_pending">Sync Pending</string>
+
+    <!-- Filters -->
+    <string name="filter">Filter</string>
+    <string name="filter_receipts">Filter Receipts</string>
+    <string name="apply_filter">Apply</string>
+    <string name="clear_filter">Clear</string>
+    <string name="close">Close</string>
+    <string name="all">All</string>
 </resources>
