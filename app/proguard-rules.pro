@@ -5,17 +5,57 @@
 # For more details, see
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Optimization flags
+-optimizationpasses 5
+-dontusemixedcaseclassnames
+-verbose
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Keep line numbers for debugging stack traces
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Remove logging in release builds
+-assumenosideeffects class android.util.Log {
+    public static *** d(...);
+    public static *** v(...);
+    public static *** i(...);
+    public static *** w(...);
+    public static *** e(...);
+}
+
+# Keep Kotlin metadata
+-keep class kotlin.Metadata { *; }
+
+# Keep data classes used with Firestore
+-keepclassmembers class com.aaditx23.auudm.data.remote.model.** {
+    *;
+}
+-keepclassmembers class com.aaditx23.auudm.domain.model.** {
+    *;
+}
+
+# Keep Room entities
+-keep class com.aaditx23.auudm.data.local.entity.** { *; }
+
+# Firebase/Firestore rules
+-keepattributes Signature
+-keepattributes *Annotation*
+-keepattributes EnclosingMethod
+-keepattributes InnerClasses
+
+# Keep Koin - more specific rules
+-keep class org.koin.core.** { *; }
+-keep class org.koin.android.** { *; }
+-keep class * extends org.koin.core.module.Module
+
+# Keep ViewModels
+-keep class * extends androidx.lifecycle.ViewModel {
+    <init>(...);
+}
+
+# Keep Composable functions
+-keepclassmembers class ** {
+    @androidx.compose.runtime.Composable <methods>;
+}
+-keep interface androidx.compose.runtime.Composer
+
