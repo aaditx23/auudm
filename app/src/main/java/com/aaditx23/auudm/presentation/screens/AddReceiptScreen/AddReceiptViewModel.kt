@@ -34,12 +34,8 @@ class AddReceiptViewModel(
         _uiState.value = _uiState.value.copy(amount = amount, amountError = false)
     }
 
-    fun updateRecipientName(name: String) {
-        _uiState.value = _uiState.value.copy(recipientName = name, recipientNameError = false)
-    }
-
-    fun updateRecipientDesignation(designation: String) {
-        _uiState.value = _uiState.value.copy(recipientDesignation = designation, recipientDesignationError = false)
+    fun updateSelectedRecipient(recipient: String) {
+        _uiState.value = _uiState.value.copy(selectedRecipient = recipient)
     }
 
     fun updateSelectedMedium(medium: String) {
@@ -55,29 +51,26 @@ class AddReceiptViewModel(
         val donorNameError = state.donorName.isBlank()
         val addressError = state.address.isBlank()
         val amountError = state.amount.isBlank() || state.amount.toDoubleOrNull() == null || state.amount.toDoubleOrNull()!! <= 0
-        val recipientNameError = state.recipientName.isBlank()
-        val recipientDesignationError = state.recipientDesignation.isBlank()
+        val recipientError = state.selectedRecipient.isBlank()
 
         _uiState.value = state.copy(
             donorNameError = donorNameError,
             addressError = addressError,
             amountError = amountError,
-            recipientNameError = recipientNameError,
-            recipientDesignationError = recipientDesignationError
+            recipientError = recipientError
         )
 
-        return !donorNameError && !addressError && !amountError && !recipientNameError && !recipientDesignationError
+        return !donorNameError && !addressError && !amountError && !recipientError
     }
 
-    suspend fun saveReceipt(months: List<String>, mediums: List<String>): Receipt {
+    suspend fun saveReceipt(months: List<String>, mediums: List<String>, recipients: List<String>): Receipt {
         val state = _uiState.value
         val receipt = Receipt(
             donorName = state.donorName,
             address = state.address,
             month = months.indexOf(state.selectedMonth) + 1,
             amount = state.amount.toDoubleOrNull() ?: 0.0,
-            recipientName = state.recipientName,
-            recipientDesignation = state.recipientDesignation,
+            recipientIndex = recipients.indexOf(state.selectedRecipient),
             medium = mediums.indexOf(state.selectedMedium) + 1,
             mediumReference = state.mediumReference,
             date = System.currentTimeMillis()
@@ -96,25 +89,11 @@ class AddReceiptViewModel(
         }
     }
 
-    fun resetForm(currentMonth: String, defaultMedium: String) {
+    fun resetForm(currentMonth: String, defaultMedium: String, defaultRecipient: String) {
         _uiState.value = AddReceiptUiState(
             selectedMonth = currentMonth,
-            selectedMedium = defaultMedium
-        )
-    }
-
-    fun previewReceipt(months: List<String>, mediums: List<String>): Receipt {
-        val state = _uiState.value
-        return Receipt(
-            donorName = state.donorName,
-            address = state.address,
-            month = months.indexOf(state.selectedMonth) + 1,
-            amount = state.amount.toDoubleOrNull() ?: 0.0,
-            recipientName = state.recipientName,
-            recipientDesignation = state.recipientDesignation,
-            medium = mediums.indexOf(state.selectedMedium) + 1,
-            mediumReference = state.mediumReference,
-            date = System.currentTimeMillis()
+            selectedMedium = defaultMedium,
+            selectedRecipient = defaultRecipient
         )
     }
 

@@ -23,4 +23,14 @@ object Constants {
         R.string.bank,
         R.string.cash
     )
+
+    val RECIPIENT_IDS = listOf(
+        R.string.recipient_01,
+        R.string.recipient_02
+    )
+
+    val RECIPIENT_DESIGNATION_IDS = listOf(
+        R.string.recipient_designation_01,
+        R.string.recipient_designation_02
+    )
 }

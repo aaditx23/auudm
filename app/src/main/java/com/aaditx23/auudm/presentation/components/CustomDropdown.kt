@@ -23,7 +23,9 @@ fun CustomDropdown(
     selected: String?,
     onSelect: (String) -> Unit,
     label: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isError: Boolean = false,
+    errorMessage: String? = null
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -40,7 +42,11 @@ fun CustomDropdown(
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             modifier = Modifier.menuAnchor()
                 .fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(12.dp),
+            isError = isError,
+            supportingText = if (isError && errorMessage != null) {
+                { Text(errorMessage) }
+            } else null
         )
         ExposedDropdownMenu(
             expanded = expanded,

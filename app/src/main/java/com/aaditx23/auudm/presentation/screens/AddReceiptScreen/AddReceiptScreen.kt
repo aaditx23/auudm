@@ -46,6 +46,8 @@ fun AddReceiptScreen(navController: NavController) {
 
     val months = Constants.MONTH_IDS.map { stringResource(it) }
     val mediums = Constants.MEDIUM_IDS.map { stringResource(it) }
+    val recipients = Constants.RECIPIENT_IDS.map { stringResource(it) }
+    val designations = Constants.RECIPIENT_DESIGNATION_IDS.map { stringResource(it) }
 
     val currentDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
     val currentMonth = Calendar.getInstance().get(Calendar.MONTH) + 1
@@ -55,6 +57,7 @@ fun AddReceiptScreen(navController: NavController) {
     LaunchedEffect(Unit) {
         viewModel.updateSelectedMonth(months[currentMonth - 1])
         viewModel.updateSelectedMedium(mediums[0])
+        viewModel.updateSelectedRecipient(recipients[0])
     }
 
     Scaffold(
@@ -75,8 +78,8 @@ fun AddReceiptScreen(navController: NavController) {
                     onClick = {
                         if (viewModel.validateFields()) {
                             scope.launch {
-                                val receipt = viewModel.saveReceipt(months, mediums)
-                                viewModel.resetForm(months[currentMonth], mediums[0])
+                                val receipt = viewModel.saveReceipt(months, mediums, recipients)
+                                viewModel.resetForm(months[currentMonth - 1], mediums[0], recipients[0])
                                 viewModel.showDialog(receipt, true)
 
                             }
@@ -94,7 +97,7 @@ fun AddReceiptScreen(navController: NavController) {
                     onClick = {
                         if (viewModel.validateFields()) {
                             scope.launch {
-                                viewModel.saveReceipt(months, mediums)
+                                viewModel.saveReceipt(months, mediums, recipients)
                                 navController.popBackStack()
                             }
                         }
@@ -154,22 +157,24 @@ fun AddReceiptScreen(navController: NavController) {
                 errorMessage = if (uiState.amountError) stringResource(R.string.amount_required) else null
             )
 
-            CustomTextField(
-                value = uiState.recipientName,
-                onValueChange = { viewModel.updateRecipientName(it) },
+            CustomDropdown(
+                list = recipients,
+                selected = uiState.selectedRecipient,
+                onSelect = { viewModel.updateSelectedRecipient(it) },
                 label = stringResource(R.string.recipient_name),
                 modifier = Modifier.fillMaxWidth(),
-                isError = uiState.recipientNameError,
-                errorMessage = if (uiState.recipientNameError) stringResource(R.string.recipient_name_required) else null
+
             )
 
+            // Auto-mapped designation (read-only)
             CustomTextField(
-                value = uiState.recipientDesignation,
-                onValueChange = { viewModel.updateRecipientDesignation(it) },
+                value = if (uiState.selectedRecipient.isNotBlank() && recipients.contains(uiState.selectedRecipient)) {
+                    designations[recipients.indexOf(uiState.selectedRecipient)]
+                } else "",
+                onValueChange = { },
                 label = stringResource(R.string.recipient_designation),
                 modifier = Modifier.fillMaxWidth(),
-                isError = uiState.recipientDesignationError,
-                errorMessage = if (uiState.recipientDesignationError) stringResource(R.string.recipient_designation_required) else null
+                enabled = false
             )
 
             CustomDropdown(

@@ -3,7 +3,6 @@ package com.aaditx23.auudm.presentation.screens.ReceiptDetailsScreen
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -62,6 +61,8 @@ fun ReceiptDetailsScreen(navController: NavController, receiptId: String) {
 
     val months = Constants.MONTH_IDS.map { stringResource(it) }
     val mediums = Constants.MEDIUM_IDS.map { stringResource(it) }
+    val recipients = Constants.RECIPIENT_IDS.map { stringResource(it) }
+    val designations = Constants.RECIPIENT_DESIGNATION_IDS.map { stringResource(it) }
 
     // Get localized error strings
     val deleteNoNetworkMsg = stringResource(R.string.delete_no_network)
@@ -269,12 +270,12 @@ fun ReceiptDetailsScreen(navController: NavController, receiptId: String) {
 
                         InfoRow(
                             label = stringResource(R.string.recipient_name),
-                            value = receiptData.recipientName
+                            value = recipients.getOrNull(receiptData.recipientIndex) ?: ""
                         )
 
                         InfoRow(
                             label = stringResource(R.string.recipient_designation),
-                            value = receiptData.recipientDesignation
+                            value = designations.getOrNull(receiptData.recipientIndex) ?: ""
                         )
                     }
                 }

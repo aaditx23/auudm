@@ -1,5 +1,6 @@
 package com.aaditx23.auudm.presentation.components.DigitalReceipt
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
@@ -17,21 +18,24 @@ import androidx.compose.ui.unit.sp
 fun ReceiptText(
     label: String,
     text: String,
-    scale: Float
+    scale: Float,
+    modifier: Modifier = Modifier
 ){
     Row(
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Start,
+        modifier = modifier
     ) {
         Text(
             text = label,
-            fontSize = 13.sp * scale,
+            fontSize = 12.sp * scale,
             fontWeight = FontWeight.W700,
             color = Color.Black
         )
         Spacer(modifier = Modifier.width(2.dp * scale))
         Text(
             text = text,
-            fontSize = 12.sp * scale,
+            fontSize = 10.sp * scale,
             color = Color.Black
         )
     }

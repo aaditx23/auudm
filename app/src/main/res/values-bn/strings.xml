@@ -125,4 +125,11 @@
     গ্রাম: সেহাঙ্গল, বিনায়কপুর, উপজেলা: নেছারাবাদ, জেলা: পিরোজপুর
     </string>
 
+    <string name="recipient_01">ইঞ্জিনিয়ার নজরুল ইসলাম</string>
+    <string name="recipient_designation_01">সভাপতি</string>
+
+    <string name="recipient_02">আব্দুর রাজ্জাক টিপু</string>
+    <string name="recipient_designation_02">অর্থ সম্পাদক</string>
+
+
 </resources>

@@ -125,4 +125,11 @@
     Village: Sehangal, Binayakpur, Upazila: Nesarabad, District: Pirojpur
     </string>
 
+    <string name="recipient_01">Engineer Nazrul Islam</string>
+    <string name="recipient_designation_01">President</string>
+
+    <string name="recipient_02">Abdur Razzak Tipu</string>
+    <string name="recipient_designation_02">Financial Secretary</string>
+
+
 </resources>

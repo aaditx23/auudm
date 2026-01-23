@@ -18,7 +18,8 @@ fun CustomTextField(
     keyboardType: KeyboardType = KeyboardType.Text,
     singleLine: Boolean = true,
     isError: Boolean = false,
-    errorMessage: String? = null
+    errorMessage: String? = null,
+    enabled: Boolean = true
 ) {
     OutlinedTextField(
         value = value,
@@ -31,6 +32,7 @@ fun CustomTextField(
         isError = isError,
         supportingText = if (isError && errorMessage != null) {
             { Text(errorMessage) }
-        } else null
+        } else null,
+        enabled = enabled
     )
 }
