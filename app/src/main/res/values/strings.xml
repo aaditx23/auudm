@@ -103,6 +103,7 @@
     <!-- Delete -->
     <string name="delete">Delete</string>
     <string name="delete_receipt">Delete Receipt</string>
+    <string name="preview_receipt">Preview Receipt</string>
     <string name="delete_confirmation">Are you sure you want to delete this receipt?</string>
     <string name="delete_success">Receipt deleted successfully</string>
     <string name="delete_failed">Failed to delete receipt:</string>

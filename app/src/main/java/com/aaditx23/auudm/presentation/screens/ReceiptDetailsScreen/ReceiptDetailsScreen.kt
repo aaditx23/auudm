@@ -3,13 +3,11 @@ package com.aaditx23.auudm.presentation.screens.ReceiptDetailsScreen
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsIgnoringVisibility
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -22,12 +20,10 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -67,13 +63,17 @@ fun ReceiptDetailsScreen(navController: NavController, receiptId: String) {
     val months = Constants.MONTH_IDS.map { stringResource(it) }
     val mediums = Constants.MEDIUM_IDS.map { stringResource(it) }
 
+    // Get localized error strings
+    val deleteNoNetworkMsg = stringResource(R.string.delete_no_network)
+    val deleteFailedMsg = stringResource(R.string.delete_failed)
+
     // Handle delete error
     LaunchedEffect(uiState.deleteError) {
         uiState.deleteError?.let { error ->
             val message = if (error == "delete_no_network") {
-                navController.context.getString(R.string.delete_no_network)
+                deleteNoNetworkMsg
             } else {
-                navController.context.getString(R.string.delete_failed) + " $error"
+                "$deleteFailedMsg $error"
             }
             snackbarHostState.showSnackbar(message)
             viewModel.clearDeleteError()
@@ -92,13 +92,42 @@ fun ReceiptDetailsScreen(navController: NavController, receiptId: String) {
         },
         floatingActionButton = {
             if (uiState.receipt != null) {
-                FloatingActionButton(
-                    onClick = { viewModel.showDialog() }
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Visibility,
-                        contentDescription = "Preview Receipt"
-                    )
+                    // Delete FAB
+                    FloatingActionButton(
+                        onClick = {
+                            if (!uiState.isDeleting) {
+                                viewModel.showDeleteConfirmation()
+                            }
+                        },
+                        containerColor = MaterialTheme.colorScheme.errorContainer,
+                        contentColor = MaterialTheme.colorScheme.onErrorContainer
+                    ) {
+                        if (uiState.isDeleting) {
+                            CircularProgressIndicator(
+                                modifier = Modifier
+                                    .height(24.dp)
+                                    .width(24.dp)
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = stringResource(R.string.delete_receipt)
+                            )
+                        }
+                    }
+
+                    // Preview FAB
+                    FloatingActionButton(
+                        onClick = { viewModel.showDialog() }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Visibility,
+                            contentDescription = stringResource(R.string.preview_receipt)
+                        )
+                    }
                 }
             }
         }
@@ -249,52 +278,29 @@ fun ReceiptDetailsScreen(navController: NavController, receiptId: String) {
                         )
                     }
                 }
-
-                // Delete Button
-                Spacer(modifier = Modifier.height(16.dp))
-                OutlinedButton(
-                    onClick = { viewModel.showDeleteConfirmation() },
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = !uiState.isDeleting
-                ) {
-                    if (uiState.isDeleting) {
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .height(20.dp)
-                                .width(20.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                    } else {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = "Delete"
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                    }
-                    Text(stringResource(R.string.delete_receipt))
-                }
             }
+        }
+
+        if (uiState.showDeleteConfirmation) {
+            DeleteConfirmationDialog(
+                onConfirm = {
+                    viewModel.dismissDeleteConfirmation()
+                    viewModel.deleteReceipt {
+                        navController.popBackStack()
+                    }
+                },
+                onDismiss = { viewModel.dismissDeleteConfirmation() },
+                isDeleting = uiState.isDeleting
+            )
+        }
+
+        if (uiState.showDialog && uiState.receipt != null) {
+            DigitalReceiptDialog(
+                receipt = uiState.receipt!!,
+                onDismiss = { viewModel.dismissDialog() }
+            )
         }
     }
 
-    // Delete Confirmation Dialog
-    if (uiState.showDeleteConfirmation) {
-        DeleteConfirmationDialog(
-            onConfirm = {
-                viewModel.dismissDeleteConfirmation()
-                viewModel.deleteReceipt {
-                    navController.popBackStack()
-                }
-            },
-            onDismiss = { viewModel.dismissDeleteConfirmation() },
-            isDeleting = uiState.isDeleting
-        )
-    }
 
-    if (uiState.showDialog && uiState.receipt != null) {
-        DigitalReceiptDialog(
-            receipt = uiState.receipt!!,
-            onDismiss = { viewModel.dismissDialog() }
-        )
-    }
 }

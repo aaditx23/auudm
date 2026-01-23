@@ -8,6 +8,7 @@ import com.aaditx23.auudm.domain.usecase.GetReceiptByIdUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
 class ReceiptDetailsViewModel(
@@ -27,11 +28,17 @@ class ReceiptDetailsViewModel(
     private fun loadReceipt() {
         viewModelScope.launch {
             try {
-                val receiptFlow = getReceiptByIdUseCase(receiptId)
-                receiptFlow.collect { receipt ->
+                val receipt = getReceiptByIdUseCase(receiptId).firstOrNull()
+                if (receipt != null) {
                     _uiState.value = _uiState.value.copy(
                         receipt = receipt,
-                        isLoading = false
+                        isLoading = false,
+                        error = null
+                    )
+                } else {
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        error = "receipt_not_found"
                     )
                 }
             } catch (e: Exception) {
@@ -77,12 +84,14 @@ class ReceiptDetailsViewModel(
                     )
                     onSuccess()
                 }.onFailure { error ->
+                    println("delete: ${error.message}")
                     _uiState.value = _uiState.value.copy(
                         isDeleting = false,
                         deleteError = error.message
                     )
                 }
             } catch (e: Exception) {
+                println("delete : ${e.message}")
                 _uiState.value = _uiState.value.copy(
                     isDeleting = false,
                     deleteError = e.message

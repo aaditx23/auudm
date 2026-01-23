@@ -103,11 +103,12 @@
     <!-- Delete -->
     <string name="delete">মুছুন</string>
     <string name="delete_receipt">রসিদ মুছুন</string>
+    <string name="preview_receipt">রসিদ প্রিভিউ</string>
     <string name="delete_confirmation">আপনি কি এই রসিদটি মুছতে চান?</string>
     <string name="delete_success">রসিদ সফলভাবে মুছে ফেলা হয়েছে</string>
     <string name="delete_failed">রসিদ মুছতে ব্যর্থ:</string>
     <string name="delete_no_network">ইন্টারনেট সংযোগ ছাড়া রসিদ মুছতে পারবেন না</string>
-    <string name="confirm_delete">মুছুন নিশ্চিত করুন</string>
+    <string name="confirm_delete">নিশ্চিত করুন</string>
 
 
     <!-- Receipt Dialog -->
