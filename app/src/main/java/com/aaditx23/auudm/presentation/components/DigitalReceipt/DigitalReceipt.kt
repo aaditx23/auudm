@@ -1,5 +1,7 @@
 package com.aaditx23.auudm.presentation.components.DigitalReceipt
 
+import android.annotation.SuppressLint
+import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -17,43 +19,61 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
+
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aaditx23.auudm.R
+import com.aaditx23.auudm.data.local.datastore.SettingsDataStore
 import com.aaditx23.auudm.domain.model.Receipt
 import com.aaditx23.auudm.presentation.util.Constants
+import org.koin.compose.koinInject
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 
+@SuppressLint("UnusedBoxWithConstraintsScope", "LocalContextConfigurationRead")
 @Composable
 fun DigitalReceipt(
     receipt: Receipt,
     modifier: Modifier = Modifier
 ) {
-    // Load string resources
-    val headerText = stringResource(R.string.receipt_header)
-    val titleText = stringResource(R.string.receipt_title)
-    val subtitleText = stringResource(R.string.receipt_subtitle)
-    val footerText = stringResource(R.string.receipt_footer)
+    val context = LocalContext.current
+    val settingsDataStore: SettingsDataStore = koinInject()
+    val language by settingsDataStore.languageFlow.collectAsState()
 
-    val receiptNoLabel = stringResource(R.string.receipt_no_short)
-    val dateLabel = stringResource(R.string.date_short)
-    val donorNameLabel = stringResource(R.string.donor_name_label)
-    val addressLabel = stringResource(R.string.address_label)
-    val monthLabel = stringResource(R.string.month_short)
-    val mediumLabel = stringResource(R.string.medium_short)
-    val amountLabel = stringResource(R.string.amount_short)
-    val recipientSignatureLabel = stringResource(R.string.recipient_signature)
-    val designationLabel = stringResource(R.string.designation_label)
+    val localizedResources = remember(language) {
+        val locale = Locale.Builder().setLanguage(language).build()
+        val configuration = Configuration(context.resources.configuration).apply {
+            setLocale(locale)
+        }
+        context.createConfigurationContext(configuration).resources
+    }
+
+    // Load string resources
+    val headerText = localizedResources.getString(R.string.receipt_header)
+    val titleText = localizedResources.getString(R.string.receipt_title)
+    val subtitleText = localizedResources.getString(R.string.receipt_subtitle)
+    val footerText = localizedResources.getString(R.string.receipt_footer)
+
+    val receiptNoLabel = localizedResources.getString(R.string.receipt_no_short)
+    val dateLabel = localizedResources.getString(R.string.date_short)
+    val donorNameLabel = localizedResources.getString(R.string.donor_name_label)
+    val addressLabel = localizedResources.getString(R.string.address_label)
+    val monthLabel = localizedResources.getString(R.string.month_short)
+    val mediumLabel = localizedResources.getString(R.string.medium_short)
+    val amountLabel = localizedResources.getString(R.string.amount_short)
+    val recipientSignatureLabel = localizedResources.getString(R.string.recipient_signature)
+    val designationLabel = localizedResources.getString(R.string.designation_label)
 
     // Load month and medium resources
-    val months = Constants.MONTH_IDS.map { stringResource(it) }
-    val mediums = Constants.MEDIUM_IDS.map { stringResource(it) }
+    val months = Constants.MONTH_IDS.map { localizedResources.getString(it) }
+    val mediums = Constants.MEDIUM_IDS.map { localizedResources.getString(it) }
 
     // Date formatter
     val dateFormat = remember { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }

@@ -23,7 +23,7 @@ class SettingsDataStore(context: Context) {
 
     fun getDarkMode(): Boolean = prefs.getBoolean(DARK_MODE_KEY, false)
 
-    fun getLanguage(): String = prefs.getString(LANGUAGE_KEY, "en") ?: "en"
+    fun getLanguage(): String = prefs.getString(LANGUAGE_KEY, "bn") ?: "en"
 
     fun setDarkMode(enabled: Boolean) {
         prefs.edit().putBoolean(DARK_MODE_KEY, enabled).apply()
