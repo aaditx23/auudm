@@ -120,4 +120,9 @@
     <string name="share_receipt_title">রসিদ শেয়ার করুন</string>
     <string name="close">বন্ধ করুন</string>
     <string name="all">সব</string>
+
+    <string name="address_details">
+    গ্রাম: সেহাঙ্গল, বিনায়কপুর, উপজেলা: নেছারাবাদ, জেলা: পিরোজপুর
+    </string>
+
 </resources>

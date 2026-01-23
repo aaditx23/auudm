@@ -3,6 +3,7 @@ package com.aaditx23.auudm.presentation.components.DigitalReceipt
 import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -37,6 +38,7 @@ import java.util.Locale
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 
+
 @SuppressLint("UnusedBoxWithConstraintsScope", "LocalContextConfigurationRead")
 @Composable
 fun DigitalReceipt(
@@ -61,7 +63,7 @@ fun DigitalReceipt(
     val subtitleText = localizedResources.getString(R.string.receipt_subtitle)
     val footerText = localizedResources.getString(R.string.receipt_footer)
 
-    val receiptNoLabel = localizedResources.getString(R.string.receipt_no_short)
+    val address_details = localizedResources.getString(R.string.address_details)
     val dateLabel = localizedResources.getString(R.string.date_short)
     val donorNameLabel = localizedResources.getString(R.string.donor_name_label)
     val addressLabel = localizedResources.getString(R.string.address_label)
@@ -76,10 +78,17 @@ fun DigitalReceipt(
     val mediums = Constants.MEDIUM_IDS.map { localizedResources.getString(it) }
 
     // Date formatter
-    val dateFormat = remember { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
-    val formattedDate = remember(receipt.date) { dateFormat.format(Date(receipt.date)) }
+    val locale = remember(language) { Locale.Builder().setLanguage(language).build() }
+    val dateFormat = remember(locale) { SimpleDateFormat("dd/MM/yyyy", locale) }
+    val formattedDate = remember(receipt.date, locale) { dateFormat.format(Date(receipt.date)) }
     val monthName = months.getOrNull(receipt.month - 1) ?: ""
     val mediumName = mediums.getOrNull(receipt.medium - 1) ?: ""
+
+    // Format amount according to locale
+    val formattedAmount = remember(receipt.amount, locale) {
+        val numberFormat = java.text.NumberFormat.getNumberInstance(locale)
+        numberFormat.format(receipt.amount)
+    }
 
     BoxWithConstraints(
         modifier = modifier.fillMaxWidth()
@@ -100,33 +109,45 @@ fun DigitalReceipt(
                HEADER
             ======================== */
 
-            Text(
-                text = headerText,
-                fontSize = (18.sp * scale),
-                fontWeight = FontWeight.W900,
+            Column(
                 modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .offset(y = 16.dp * scale),
-                color = Color.Black
-            )
-
-            Row(
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .offset(y = 42.dp * scale)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
-                    text = titleText,
-                    fontSize = (12.sp * scale),
-                    fontWeight = FontWeight.W600,
+                    text = headerText,
+                    fontSize = (18.sp * scale),
+                    fontWeight = FontWeight.W900,
+                    modifier = Modifier
+                        .offset(y=10.dp * scale),
                     color = Color.Black
                 )
                 Text(
-                    text = " $subtitleText",
-                    fontSize = (12.sp * scale),
-                    fontStyle = FontStyle.Italic,
+                    text = address_details,
+                    fontSize = (8.sp * scale),
+                    fontWeight = FontWeight.W300,
+                    modifier = Modifier
+                        .offset(y=5.dp * scale),
                     color = Color.Black
                 )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = titleText,
+                        fontSize = (12.sp * scale),
+                        fontWeight = FontWeight.W600,
+                        color = Color.Black
+                    )
+                    Text(
+                        text = " $subtitleText",
+                        fontSize = (12.sp * scale),
+                        fontStyle = FontStyle.Italic,
+                        color = Color.Black
+                    )
+                }
             }
 
             /* =======================
@@ -136,23 +157,9 @@ fun DigitalReceipt(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .offset(y = 70.dp * scale)
+                    .offset(y = 85.dp * scale)
                     .padding(horizontal = 32.dp * scale)
             ) {
-                Row(modifier = Modifier.fillMaxWidth()) {
-                    ReceiptText(
-                        label = receiptNoLabel,
-                        text = "...${receipt.id.takeLast(4)}",
-                        scale = scale
-                    )
-                    Spacer(Modifier.weight(1f))
-                    ReceiptText(
-                        label = dateLabel,
-                        text = formattedDate,
-                        scale = scale
-                    )
-                }
-                Spacer(Modifier.height(0.dp))
                 ReceiptText(
                     label = donorNameLabel,
                     text = receipt.donorName,
@@ -165,11 +172,20 @@ fun DigitalReceipt(
                     scale = scale
                 )
                 Spacer(Modifier.height(0.dp))
-                ReceiptText(
-                    label = monthLabel,
-                    text = monthName,
-                    scale = scale
-                )
+
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    ReceiptText(
+                        label = monthLabel,
+                        text = monthName,
+                        scale = scale
+                    )
+                    Spacer(Modifier.weight(1f))
+                    ReceiptText(
+                        label = dateLabel,
+                        text = formattedDate,
+                        scale = scale
+                    )
+                }
                 Spacer(Modifier.height(0.dp))
                 Row(modifier = Modifier.fillMaxWidth()) {
                     ReceiptText(
@@ -180,7 +196,7 @@ fun DigitalReceipt(
                     Spacer(Modifier.weight(1f))
                     ReceiptText(
                         label = amountLabel,
-                        text = receipt.amount.toString(),
+                        text = formattedAmount,
                         scale = scale
                     )
                 }
