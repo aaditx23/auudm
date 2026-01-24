@@ -125,7 +125,6 @@ fun DigitalReceiptDialog(
                 tempFile
             }
 
-            //Calling startActivity() from outside of an Activity context requires the FLAG_ACTIVITY_NEW_TASK flag. Is this really what you want?
             withContext(Dispatchers.Main) {
                 val uri = FileProvider.getUriForFile(
                     context,
@@ -135,9 +134,12 @@ fun DigitalReceiptDialog(
                 val intent = Intent(Intent.ACTION_SEND).apply {
                     type = "image/png"
                     putExtra(Intent.EXTRA_STREAM, uri)
-                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
                 }
-                context.startActivity(Intent.createChooser(intent, shareTitle))
+                val chooserIntent = Intent.createChooser(intent, shareTitle).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+                context.startActivity(chooserIntent)
             }
         } catch (e: Exception) {
             println(e.message)
