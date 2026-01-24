@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,6 +37,7 @@ import com.aaditx23.auudm.presentation.components.MonthSelector
 import com.aaditx23.auudm.presentation.util.Constants
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -50,12 +52,18 @@ fun AddReceiptScreen(navController: NavController) {
     val recipients = Constants.RECIPIENT_IDS.map { stringResource(it) }
     val designations = Constants.RECIPIENT_DESIGNATION_IDS.map { stringResource(it) }
 
+    val integerFormat = remember { NumberFormat.getIntegerInstance(Locale.getDefault()) }
+    integerFormat.isGroupingUsed = false
+
     val currentDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
     val currentMonth = Calendar.getInstance().get(Calendar.MONTH) + 1
+    val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+    val years = (currentYear..currentYear + 10).map { integerFormat.format(it) }
 
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
+        viewModel.updateSelectedYear(integerFormat.format(currentYear).toInt())
         viewModel.updateSelectedMonths(listOf(currentMonth))
         viewModel.updateSelectedMedium(mediums[0])
         viewModel.updateSelectedRecipient(recipients[0])
@@ -143,6 +151,13 @@ fun AddReceiptScreen(navController: NavController) {
             MonthSelector(
                 selectedMonths = uiState.selectedMonths,
                 onMonthToggle = { viewModel.toggleMonth(it) },
+                onSelectAll = { selectAll ->
+                    if (selectAll) {
+                        viewModel.updateSelectedMonths((1..12).toList())
+                    } else {
+                        viewModel.updateSelectedMonths(emptyList())
+                    }
+                },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -153,6 +168,19 @@ fun AddReceiptScreen(navController: NavController) {
                     style = MaterialTheme.typography.bodySmall
                 )
             }
+
+            CustomDropdown(
+                list = years,
+                selected = integerFormat.format(uiState.selectedYear),
+                onSelect = { selected ->
+                    val index = years.indexOf(selected)
+                    if (index != -1) {
+                        viewModel.updateSelectedYear(currentYear + index)
+                    }
+                },
+                label = stringResource(R.string.select_year),
+                modifier = Modifier.fillMaxWidth()
+            )
 
             CustomTextField(
                 value = uiState.amount,
@@ -210,3 +238,4 @@ fun AddReceiptScreen(navController: NavController) {
         )
     }
 }
+

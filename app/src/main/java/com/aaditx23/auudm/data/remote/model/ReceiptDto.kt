@@ -5,6 +5,7 @@ data class ReceiptDto(
     var donorName: String = "",
     var address: String = "",
     var month: List<Int> = emptyList(),
+    var year: Int = 0,
     var amount: Double = 0.0,
     var recipientIndex: Int = 0,
     var medium: Int = 0,

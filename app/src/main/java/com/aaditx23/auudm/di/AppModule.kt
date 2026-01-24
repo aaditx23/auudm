@@ -12,6 +12,7 @@ import com.aaditx23.auudm.domain.usecase.GetReceiptByIdUseCase
 import com.aaditx23.auudm.domain.usecase.GetReceiptsUseCase
 import com.aaditx23.auudm.domain.usecase.SaveReceiptUseCase
 import com.aaditx23.auudm.domain.usecase.DeleteReceiptUseCase
+import com.aaditx23.auudm.domain.usecase.GetAllYearsUseCase
 import com.aaditx23.auudm.domain.usecase.SearchReceiptsUseCase
 import com.aaditx23.auudm.domain.usecase.SearchReceiptsWithFiltersUseCase
 import com.aaditx23.auudm.domain.usecase.SyncReceiptToFirestoreUseCase
@@ -65,6 +66,7 @@ val appModule = module {
     factoryOf(::SyncAllReceiptsToFirestoreUseCase)
     factoryOf(::GetReceiptsFromFirestoreUseCase)
     factoryOf(::SyncPendingReceiptsUseCase)
+    factoryOf(::GetAllYearsUseCase)
 
     // Settings
     single { SettingsDataStore(androidContext()) }

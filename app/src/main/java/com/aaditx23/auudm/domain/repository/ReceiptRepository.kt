@@ -16,6 +16,7 @@ interface ReceiptRepository {
     fun searchReceiptsWithFilters(
         query: String,
         month: Int?,
+        year: Int?,
         medium: Int?
     ): Flow<List<Receipt>>
 
@@ -35,4 +36,6 @@ interface ReceiptRepository {
     suspend fun updateSyncStatus(id: String, synced: Boolean): Result<Unit>
 
     fun getUnsyncedReceipts(): Flow<List<Receipt>>
+
+    fun getAllYears(): Flow<List<Int>>
 }

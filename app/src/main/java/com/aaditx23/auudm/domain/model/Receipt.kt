@@ -7,6 +7,7 @@ data class Receipt(
     val donorName: String,
     val address: String,
     val month: List<Int>,
+    val year: Int,
     val amount: Double,
     val recipientIndex: Int,
     val medium: Int,

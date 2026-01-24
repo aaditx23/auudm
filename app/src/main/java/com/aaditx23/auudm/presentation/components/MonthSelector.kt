@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,9 +30,11 @@ import com.aaditx23.auudm.presentation.util.Constants
 fun MonthSelector(
     selectedMonths: List<Int>,
     onMonthToggle: (Int) -> Unit,
+    onSelectAll: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val monthNames = Constants.MONTH_IDS.map { stringResource(it) }
+    val allSelected = selectedMonths.size == 12
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -41,6 +45,24 @@ fun MonthSelector(
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.padding(bottom = 8.dp)
         )
+
+        // Select All Checkbox
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(bottom = 8.dp)
+        ) {
+            Checkbox(
+                checked = allSelected,
+                onCheckedChange = { checked ->
+                    onSelectAll(checked)
+                }
+            )
+            Text(
+                text = stringResource(R.string.select_all),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(start = 8.dp)
+            )
+        }
 
         FlowRow(
             modifier = Modifier.fillMaxWidth(),

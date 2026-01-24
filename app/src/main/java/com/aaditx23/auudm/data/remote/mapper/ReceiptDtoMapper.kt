@@ -8,6 +8,7 @@ fun Receipt.toDto() = ReceiptDto(
     donorName = donorName,
     address = address,
     month = month,
+    year = year,
     amount = amount,
     recipientIndex = recipientIndex,
     medium = medium,
@@ -22,6 +23,7 @@ fun ReceiptDto.toDomain() = Receipt(
     donorName = donorName,
     address = address,
     month = month,
+    year = year,
     amount = amount,
     recipientIndex = recipientIndex,
     medium = medium,
@@ -30,4 +32,3 @@ fun ReceiptDto.toDomain() = Receipt(
     createdAt = createdAt,
     isSynced = isSynced
 )
-

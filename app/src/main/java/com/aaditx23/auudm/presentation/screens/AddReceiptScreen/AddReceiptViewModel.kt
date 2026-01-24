@@ -56,6 +56,10 @@ class AddReceiptViewModel(
         _uiState.value = _uiState.value.copy(mediumReference = reference)
     }
 
+    fun updateSelectedYear(year: Int) {
+        _uiState.value = _uiState.value.copy(selectedYear = year)
+    }
+
     fun validateFields(): Boolean {
         val state = _uiState.value
         val donorNameError = state.donorName.isBlank()
@@ -81,6 +85,7 @@ class AddReceiptViewModel(
             donorName = state.donorName,
             address = state.address,
             month = state.selectedMonths,
+            year = state.selectedYear,
             amount = state.amount.toDoubleOrNull() ?: 0.0,
             recipientIndex = recipients.indexOf(state.selectedRecipient),
             medium = mediums.indexOf(state.selectedMedium) + 1,
@@ -102,8 +107,10 @@ class AddReceiptViewModel(
     }
 
     fun resetForm(currentMonthInt: Int, defaultMedium: String, defaultRecipient: String) {
+        val currentYear = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR)
         _uiState.value = AddReceiptUiState(
             selectedMonths = listOf(currentMonthInt),
+            selectedYear = currentYear,
             selectedMedium = defaultMedium,
             selectedRecipient = defaultRecipient
         )

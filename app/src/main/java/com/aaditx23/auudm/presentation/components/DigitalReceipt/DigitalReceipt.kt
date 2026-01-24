@@ -37,6 +37,7 @@ import java.util.Date
 import java.util.Locale
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import java.text.NumberFormat
 
 
 @SuppressLint("UnusedBoxWithConstraintsScope", "LocalContextConfigurationRead")
@@ -72,6 +73,7 @@ fun DigitalReceipt(
     val amountLabel = localizedResources.getString(R.string.amount_short)
     val recipientSignatureLabel = localizedResources.getString(R.string.recipient_signature)
     val designationLabel = localizedResources.getString(R.string.designation_label)
+    val yearLabel = localizedResources.getString(R.string.year)
 
     // Load month and medium resources
     val months = Constants.MONTH_IDS.map { localizedResources.getString(it) }
@@ -81,13 +83,16 @@ fun DigitalReceipt(
 
     // Date formatter
     val locale = remember(language) { Locale.Builder().setLanguage(language).build() }
+    val integerFormat = remember { NumberFormat.getIntegerInstance(locale) }
+    integerFormat.isGroupingUsed = false
+
     val dateFormat = remember(locale) { SimpleDateFormat("dd/MM/yyyy", locale) }
     val formattedDate = remember(receipt.date, locale) { dateFormat.format(Date(receipt.date)) }
     val monthName = receipt.month.joinToString(", ") { months.getOrNull(it - 1) ?: "" }
     val mediumName = mediums.getOrNull(receipt.medium - 1) ?: ""
     val recipientName = recipients.getOrNull(receipt.recipientIndex) ?: ""
     val recipientDesignation = designations.getOrNull(receipt.recipientIndex) ?: ""
-
+    val year = integerFormat.format(receipt.year)
     // Format amount according to locale
     val formattedAmount = remember(receipt.amount, locale) {
         val numberFormat = java.text.NumberFormat.getNumberInstance(locale)
@@ -162,7 +167,7 @@ fun DigitalReceipt(
                 modifier = Modifier
                     .fillMaxWidth()
                     .offset(y = 75.dp * scale)
-                    .padding(horizontal = 32.dp * scale)
+                    .padding(horizontal = 32.dp * scale),
             ) {
                 Row(modifier = Modifier.fillMaxWidth()) {
                     ReceiptText(
@@ -181,13 +186,11 @@ fun DigitalReceipt(
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
-                Spacer(Modifier.height(0.dp))
                 ReceiptText(
                     label = addressLabel,
                     text = receipt.address,
                     scale = scale
                 )
-                Spacer(Modifier.height(0.dp))
 
                 ReceiptText(
                     label = monthLabel,
@@ -195,7 +198,12 @@ fun DigitalReceipt(
                     scale = scale,
                     modifier = Modifier.fillMaxWidth()
                 )
-                Spacer(Modifier.height(0.dp))
+                ReceiptText(
+                    label = yearLabel,
+                    text = year,
+                    scale = scale,
+                    modifier = Modifier.fillMaxWidth()
+                )
                 Row(modifier = Modifier.fillMaxWidth()) {
                     ReceiptText(
                         label = mediumLabel,
@@ -210,18 +218,20 @@ fun DigitalReceipt(
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
-                ReceiptText(
-                    label = recipientSignatureLabel,
-                    text = recipientName,
-                    scale = scale,
-                    modifier = Modifier.fillMaxWidth()
-                )
-                ReceiptText(
-                    label = designationLabel,
-                    text = recipientDesignation,
-                    scale = scale,
-                    modifier = Modifier.fillMaxWidth()
-                )
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    ReceiptText(
+                        label = recipientSignatureLabel,
+                        text = recipientName,
+                        scale = scale,
+                        modifier = Modifier.fillMaxWidth(0.55f)
+                    )
+                    ReceiptText(
+                        label = designationLabel,
+                        text = recipientDesignation,
+                        scale = scale,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
 
             /* =======================
@@ -230,9 +240,10 @@ fun DigitalReceipt(
 
             Text(
                 text = footerText,
-                fontSize = (6.sp),
+                fontSize = (5.sp*scale),
                 modifier = Modifier.align(Alignment.BottomCenter),
-                color = Color.Black
+                color = Color.Black.copy(alpha = 0.7f),
+                fontWeight = FontWeight.W300
             )
         }
     }

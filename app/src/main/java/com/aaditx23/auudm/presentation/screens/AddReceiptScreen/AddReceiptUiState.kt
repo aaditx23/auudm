@@ -1,11 +1,14 @@
 package com.aaditx23.auudm.presentation.screens.AddReceiptScreen
 
 import com.aaditx23.auudm.domain.model.Receipt
+import java.util.Calendar.YEAR
+import java.util.Calendar.getInstance
 
 data class AddReceiptUiState(
     val donorName: String = "",
     val address: String = "",
     val selectedMonths: List<Int> = emptyList(),
+    val selectedYear: Int = getInstance().get(YEAR),
     val amount: String = "",
     val selectedRecipient: String = "",
     val selectedMedium: String = "",

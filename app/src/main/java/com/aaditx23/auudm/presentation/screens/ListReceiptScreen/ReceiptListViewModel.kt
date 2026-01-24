@@ -10,6 +10,7 @@ import com.aaditx23.auudm.domain.usecase.SearchReceiptsWithFiltersUseCase
 import com.aaditx23.auudm.domain.usecase.SyncPendingReceiptsUseCase
 import com.aaditx23.auudm.domain.usecase.GetReceiptsFromFirestoreUseCase
 import com.aaditx23.auudm.domain.usecase.SaveReceiptUseCase
+import com.aaditx23.auudm.domain.usecase.GetAllYearsUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,7 +26,8 @@ class ReceiptListViewModel(
     private val syncPendingReceiptsUseCase: SyncPendingReceiptsUseCase,
     private val getReceiptsFromFirestoreUseCase: GetReceiptsFromFirestoreUseCase,
     private val saveReceiptsUseCase: SaveReceiptUseCase,
-    private val networkMonitor: NetworkMonitor
+    private val networkMonitor: NetworkMonitor,
+    private val getAllYearsUseCase: GetAllYearsUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ReceiptListUiState())
@@ -34,6 +36,7 @@ class ReceiptListViewModel(
     init {
         observeNetwork()
         getReceipts()
+        collectAvailableYears()
     }
 
     private fun getReceipts() {
@@ -52,6 +55,14 @@ class ReceiptListViewModel(
         }
     }
 
+    private fun collectAvailableYears() {
+        viewModelScope.launch {
+            getAllYearsUseCase().collectLatest { years ->
+                _uiState.value = _uiState.value.copy(availableYears = years)
+            }
+        }
+    }
+
     fun searchReceipts(query: String) {
         _uiState.value = _uiState.value.copy(searchQuery = query, isLoading = true, error = null)
         viewModelScope.launch {
@@ -60,6 +71,7 @@ class ReceiptListViewModel(
                 searchReceiptsWithFiltersUseCase(
                     query = query,
                     month = _uiState.value.filterMonth,
+                    year = _uiState.value.filterYear,
                     medium = _uiState.value.filterMedium
                 ).collectLatest { receipts ->
                     _uiState.value = _uiState.value.copy(receipts = receipts, isLoading = false)
@@ -70,9 +82,10 @@ class ReceiptListViewModel(
         }
     }
 
-    fun applyFilters(month: Int?, medium: Int?) {
+    fun applyFilters(month: Int?, year: Int?, medium: Int?) {
         _uiState.value = _uiState.value.copy(
             filterMonth = month,
+            filterYear = year,
             filterMedium = medium,
             isLoading = true
         )
@@ -82,6 +95,7 @@ class ReceiptListViewModel(
                 searchReceiptsWithFiltersUseCase(
                     query = _uiState.value.searchQuery,
                     month = month,
+                    year = year,
                     medium = medium
                 ).collectLatest { receipts ->
                     _uiState.value = _uiState.value.copy(receipts = receipts, isLoading = false)
@@ -95,6 +109,7 @@ class ReceiptListViewModel(
     fun clearFilters() {
         _uiState.value = _uiState.value.copy(
             filterMonth = null,
+            filterYear = null,
             filterMedium = null,
             isLoading = true
         )
@@ -104,6 +119,7 @@ class ReceiptListViewModel(
                 searchReceiptsWithFiltersUseCase(
                     query = _uiState.value.searchQuery,
                     month = null,
+                    year = null,
                     medium = null
                 ).collectLatest { receipts ->
                     _uiState.value = _uiState.value.copy(receipts = receipts, isLoading = false)

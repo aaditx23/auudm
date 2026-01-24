@@ -10,9 +10,9 @@ class SearchReceiptsWithFiltersUseCase(
     operator fun invoke(
         query: String = "",
         month: Int? = null,
+        year: Int? = null,
         medium: Int? = null
     ): Flow<List<Receipt>> {
-        return repository.searchReceiptsWithFilters(query, month, medium)
+        return repository.searchReceiptsWithFilters(query, month, year, medium)
     }
 }
-

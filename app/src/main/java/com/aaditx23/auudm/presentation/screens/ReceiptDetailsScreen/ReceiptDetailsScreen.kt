@@ -60,6 +60,9 @@ fun ReceiptDetailsScreen(navController: NavController, receiptId: String) {
     val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     val dateTimeFormat = SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault())
 
+    val integerFormat = remember { NumberFormat.getIntegerInstance(Locale.getDefault()) }
+    integerFormat.isGroupingUsed = false
+
     val months = Constants.MONTH_IDS.map { stringResource(it) }
     val mediums = Constants.MEDIUM_IDS.map { stringResource(it) }
     val recipients = Constants.RECIPIENT_IDS.map { stringResource(it) }
@@ -228,6 +231,11 @@ fun ReceiptDetailsScreen(navController: NavController, receiptId: String) {
                         InfoRow(
                             label = stringResource(R.string.month),
                             value = receiptData.month.joinToString(", ") { months.getOrNull(it - 1) ?: "Unknown" }
+                        )
+
+                        InfoRow(
+                            label = stringResource(R.string.year),
+                            value = "${integerFormat.format(receiptData.year)}"
                         )
 
                         InfoRow(

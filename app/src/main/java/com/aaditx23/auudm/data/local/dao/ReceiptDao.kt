@@ -34,11 +34,13 @@ interface ReceiptDao {
     @Query("SELECT * FROM receipts WHERE " +
             "(donorName LIKE '%' || :query || '%' OR id LIKE '%' || :query || '%') " +
             "AND (:month IS NULL OR ',' || month || ',' LIKE '%' || ',' || :month || ',' || '%') " +
+            "AND (:year IS NULL OR year = :year) " +
             "AND (:medium IS NULL OR medium = :medium) " +
             "ORDER BY id DESC")
     fun searchReceiptsWithFilters(
         query: String,
         month: Int?,
+        year: Int?,
         medium: Int?
     ): Flow<List<ReceiptEntity>>
 
@@ -50,4 +52,7 @@ interface ReceiptDao {
 
     @Query("SELECT * FROM receipts WHERE isSynced = 0 ORDER BY id DESC")
     fun getUnsyncedReceipts(): Flow<List<ReceiptEntity>>
+
+    @Query("SELECT DISTINCT year FROM receipts ORDER BY year DESC")
+    fun getAllYears(): Flow<List<Int>>
 }

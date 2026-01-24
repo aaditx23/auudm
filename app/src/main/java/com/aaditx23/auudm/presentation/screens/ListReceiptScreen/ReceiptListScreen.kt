@@ -100,7 +100,7 @@ fun ReceiptListScreen(navController: NavController) {
                     Icon(
                         imageVector = Icons.Filled.FilterList,
                         contentDescription = stringResource(R.string.filter),
-                        tint = if (uiState.filterMonth != null || uiState.filterMedium != null)
+                        tint = if (uiState.filterMonth != null || uiState.filterYear != null || uiState.filterMedium != null)
                             MaterialTheme.colorScheme.primary
                         else
                             MaterialTheme.colorScheme.onSurfaceVariant
@@ -153,9 +153,11 @@ fun ReceiptListScreen(navController: NavController) {
         if (uiState.isFilterDialogOpen) {
             FilterDialog(
                 currentMonth = uiState.filterMonth,
+                currentYear = uiState.filterYear,
                 currentMedium = uiState.filterMedium,
-                onApplyFilter = { month, medium ->
-                    viewModel.applyFilters(month, medium)
+                availableYears = uiState.availableYears,
+                onApplyFilter = { month, year, medium ->
+                    viewModel.applyFilters(month, year, medium)
                 },
                 onClearFilter = {
                     viewModel.clearFilters()

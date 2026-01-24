@@ -51,9 +51,10 @@ class ReceiptRepositoryImpl(
     override fun searchReceiptsWithFilters(
         query: String,
         month: Int?,
+        year: Int?,
         medium: Int?
     ): Flow<List<Receipt>> {
-        return dao.searchReceiptsWithFilters(query, month, medium).map { entities ->
+        return dao.searchReceiptsWithFilters(query, month, year, medium).map { entities ->
             entities.map { it.toDomain() }
         }
     }
@@ -127,5 +128,9 @@ class ReceiptRepositoryImpl(
         return dao.getUnsyncedReceipts().map { entities ->
             entities.map { it.toDomain() }
         }
+    }
+
+    override fun getAllYears(): Flow<List<Int>> {
+        return dao.getAllYears()
     }
 }

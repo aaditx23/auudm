@@ -26,16 +26,35 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.aaditx23.auudm.R
 import com.aaditx23.auudm.presentation.components.CustomDropdown
+import java.text.NumberFormat
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FilterDialog(
     currentMonth: Int?,
+    currentYear: Int?,
     currentMedium: Int?,
-    onApplyFilter: (month: Int?, medium: Int?) -> Unit,
+    availableYears: List<Int>,
+    onApplyFilter: (month: Int?, year: Int?, medium: Int?) -> Unit,
     onClearFilter: () -> Unit,
     onDismiss: () -> Unit
 ) {
+    // Load string resources
+    val filterReceiptsText = stringResource(R.string.filter_receipts)
+    val allText = stringResource(R.string.all)
+    val monthText = stringResource(R.string.month)
+    val yearText = stringResource(R.string.year)
+    val mediumText = stringResource(R.string.medium)
+    val closeText = stringResource(R.string.close)
+    val clearFilterText = stringResource(R.string.clear_filter)
+    val applyFilterText = stringResource(R.string.apply_filter)
+
+    val integerFormat = remember { NumberFormat.getIntegerInstance(Locale.getDefault()) }
+    integerFormat.isGroupingUsed = false
+
+    val years = listOf(stringResource(R.string.all)) + availableYears.map { integerFormat.format(it) }
+
     val months = listOf(
         stringResource(R.string.all),
         stringResource(R.string.january),
@@ -60,13 +79,17 @@ fun FilterDialog(
     )
 
     var selectedMonth by remember { mutableStateOf(months[currentMonth ?: 0]) }
+    var selectedYear by remember {
+        val selectedYearIndex = if (currentYear == null) 0 else availableYears.indexOf(currentYear) + 1
+        mutableStateOf(years[selectedYearIndex])
+    }
     var selectedMedium by remember { mutableStateOf(mediums[currentMedium ?: 0]) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = stringResource(R.string.filter_receipts),
+                text = filterReceiptsText,
                 style = MaterialTheme.typography.headlineSmall
             )
         },
@@ -84,7 +107,16 @@ fun FilterDialog(
                     list = months,
                     selected = selectedMonth,
                     onSelect = { selectedMonth = it },
-                    label = stringResource(R.string.month),
+                    label = monthText,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                // Year Filter
+                CustomDropdown(
+                    list = years,
+                    selected = selectedYear,
+                    onSelect = { selectedYear = it },
+                    label = yearText,
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -93,7 +125,7 @@ fun FilterDialog(
                     list = mediums,
                     selected = selectedMedium,
                     onSelect = { selectedMedium = it },
-                    label = stringResource(R.string.medium),
+                    label = mediumText,
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -103,7 +135,7 @@ fun FilterDialog(
             TextButton(
                 onClick = onDismiss,
             ) {
-                Text(stringResource(R.string.close))
+                Text(closeText)
             }
         },
         confirmButton = {
@@ -117,23 +149,24 @@ fun FilterDialog(
                         onDismiss()
                     },
                 ) {
-                    Text(stringResource(R.string.clear_filter))
+                    Text(clearFilterText)
                 }
 
                 Button(
                     onClick = {
                         val monthIndex = months.indexOf(selectedMonth)
+                        val yearIndex = years.indexOf(selectedYear)
                         val mediumIndex = mediums.indexOf(selectedMedium)
                         val month = if (monthIndex == 0) null else monthIndex
+                        val year = if (yearIndex == 0) null else availableYears[yearIndex - 1]
                         val medium = if (mediumIndex == 0) null else mediumIndex
-                        onApplyFilter(month, medium)
+                        onApplyFilter(month, year, medium)
                         onDismiss()
                     },
                 ) {
-                    Text(stringResource(R.string.apply_filter))
+                    Text(applyFilterText)
                 }
             }
         }
     )
 }
-

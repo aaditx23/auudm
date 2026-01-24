@@ -10,6 +10,8 @@ data class ReceiptListUiState(
     val isOnline: Boolean = false,
     val isSyncing: Boolean = false,
     val filterMonth: Int? = null, // null means no filter
+    val filterYear: Int? = null,
     val filterMedium: Int? = null, // null means no filter
-    val isFilterDialogOpen: Boolean = false
+    val isFilterDialogOpen: Boolean = false,
+    val availableYears: List<Int> = emptyList()
 )

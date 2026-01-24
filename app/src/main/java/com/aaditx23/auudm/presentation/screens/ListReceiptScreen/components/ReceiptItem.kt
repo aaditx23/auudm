@@ -42,12 +42,17 @@ import java.util.Locale
 @Composable
 fun ReceiptItem(receipt: Receipt, navController: NavController) {
     val numberFormat = remember { NumberFormat.getInstance(Locale.getDefault()) }
+    val integerFormat = remember { NumberFormat.getIntegerInstance(Locale.getDefault()) }
+    integerFormat.isGroupingUsed = false
     val dateFormat = remember { SimpleDateFormat("dd MMM yyyy", Locale.getDefault()) }
+
+
 
     val months = Constants.MONTH_IDS.map { stringResource(it) }
     val formattedDate = remember(receipt.date) { dateFormat.format(Date(receipt.date)) }
 
     var showDialog by remember { mutableStateOf(false) }
+
 
     Card(
         modifier = Modifier
@@ -139,13 +144,13 @@ fun ReceiptItem(receipt: Receipt, navController: NavController) {
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Bottom Row: Month, Amount, Date
+            // Bottom Row: Month, Amount, Year
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 // Month
-                Column {
+                Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = stringResource(R.string.month),
                         style = MaterialTheme.typography.labelSmall,
@@ -155,13 +160,12 @@ fun ReceiptItem(receipt: Receipt, navController: NavController) {
                         text = receipt.month.joinToString(", ") { months.getOrNull(it - 1) ?: "—" },
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.fillMaxWidth(0.5f)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
                 // Amount
-                Column(horizontalAlignment = Alignment.End) {
+                Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         text = stringResource(R.string.amount),
                         style = MaterialTheme.typography.labelSmall,
@@ -174,10 +178,26 @@ fun ReceiptItem(receipt: Receipt, navController: NavController) {
                         color = MaterialTheme.colorScheme.secondary
                     )
                 }
+
+
             }
 
             Spacer(modifier = Modifier.height(8.dp))
-
+            // Year
+            Column(modifier = Modifier, horizontalAlignment = Alignment.Start) {
+                Text(
+                    text = stringResource(R.string.year),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                )
+                Text(
+                    text = "${integerFormat.format(receipt.year)}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
             // Date
             Text(
                 text = formattedDate,
