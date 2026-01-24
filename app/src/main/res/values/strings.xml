@@ -82,6 +82,7 @@
     <string name="amount_required">Valid amount is required</string>
     <string name="recipient_name_required">Recipient name is required</string>
     <string name="recipient_designation_required">Recipient designation is required</string>
+    <string name="month_required">Please select at least one month</string>
 
     <!-- Sync Messages -->
     <string name="sync_all_success">All receipts synced to cloud successfully!</string>
@@ -149,4 +150,7 @@
 
     <string name="year">Year</string>
     <string name="select_year">Select Year</string>
+
+    <!-- Donation Information -->
+    <string name="donation_information">Donation Information</string>
 </resources>

@@ -82,6 +82,7 @@
     <string name="amount_required">বৈধ পরিমাণ প্রয়োজন</string>
     <string name="recipient_name_required">প্রাপকের নাম প্রয়োজন</string>
     <string name="recipient_designation_required">প্রাপকের পদবী প্রয়োজন</string>
+    <string name="month_required">অন্তত একটি মাস নির্বাচন করুন</string>
 
     <!-- Sync Messages -->
     <string name="sync_all_success">সমস্ত রসিদ ক্লাউডে সিঙ্ক হয়েছে!</string>
@@ -150,5 +151,8 @@
     <!-- Year -->
     <string name="year">বছর</string>
     <string name="select_year">বছর নির্বাচন করুন</string>
+
+    <!-- Donation Information -->
+    <string name="donation_information">অনুদান তথ্য</string>
 
 </resources>

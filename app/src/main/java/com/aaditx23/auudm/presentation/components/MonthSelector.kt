@@ -84,7 +84,7 @@ fun MonthSelector(
                         containerColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
                     ),
                     elevation = CardDefaults.cardElevation(
-                        defaultElevation = if (isSelected) 4.dp else 1.dp
+                        defaultElevation = if (isSelected) 0.dp else 3.dp
                     )
                 ) {
                     Box(

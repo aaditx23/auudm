@@ -10,6 +10,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -25,6 +27,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -130,103 +133,168 @@ fun AddReceiptScreen(navController: NavController) {
         ) {
             Text(text = stringResource(R.string.date) + ": $currentDate")
 
-            CustomTextField(
-                value = uiState.donorName,
-                onValueChange = { viewModel.updateDonorName(it) },
-                label = stringResource(R.string.donor_name),
+            // Donor Information Card
+            Card(
                 modifier = Modifier.fillMaxWidth(),
-                isError = uiState.donorNameError,
-                errorMessage = if (uiState.donorNameError) stringResource(R.string.donor_name_required) else null
-            )
-
-            CustomTextField(
-                value = uiState.address,
-                onValueChange = { viewModel.updateAddress(it) },
-                label = stringResource(R.string.address),
-                modifier = Modifier.fillMaxWidth(),
-                isError = uiState.addressError,
-                errorMessage = if (uiState.addressError) stringResource(R.string.address_required) else null
-            )
-
-            MonthSelector(
-                selectedMonths = uiState.selectedMonths,
-                onMonthToggle = { viewModel.toggleMonth(it) },
-                onSelectAll = { selectAll ->
-                    if (selectAll) {
-                        viewModel.updateSelectedMonths((1..12).toList())
-                    } else {
-                        viewModel.updateSelectedMonths(emptyList())
-                    }
-                },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            if (uiState.monthError) {
-                Text(
-                    text = "Please select at least one month",
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
                 )
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.donor_information),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+
+                    CustomTextField(
+                        value = uiState.donorName,
+                        onValueChange = { viewModel.updateDonorName(it) },
+                        label = stringResource(R.string.donor_name),
+                        modifier = Modifier.fillMaxWidth(),
+                        isError = uiState.donorNameError,
+                        errorMessage = if (uiState.donorNameError) stringResource(R.string.donor_name_required) else null
+                    )
+
+                    CustomTextField(
+                        value = uiState.address,
+                        onValueChange = { viewModel.updateAddress(it) },
+                        label = stringResource(R.string.address),
+                        modifier = Modifier.fillMaxWidth(),
+                        isError = uiState.addressError,
+                        errorMessage = if (uiState.addressError) stringResource(R.string.address_required) else null
+                    )
+                }
             }
 
-            CustomDropdown(
-                list = years,
-                selected = integerFormat.format(uiState.selectedYear),
-                onSelect = { selected ->
-                    val index = years.indexOf(selected)
-                    if (index != -1) {
-                        viewModel.updateSelectedYear(currentYear + index)
-                    }
-                },
-                label = stringResource(R.string.select_year),
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            CustomTextField(
-                value = uiState.amount,
-                onValueChange = { viewModel.updateAmount(it) },
-                label = stringResource(R.string.amount),
+            // Donation Information Card
+            Card(
                 modifier = Modifier.fillMaxWidth(),
-                keyboardType = KeyboardType.Number,
-                isError = uiState.amountError,
-                errorMessage = if (uiState.amountError) stringResource(R.string.amount_required) else null
-            )
-
-            CustomDropdown(
-                list = recipients,
-                selected = uiState.selectedRecipient,
-                onSelect = { viewModel.updateSelectedRecipient(it) },
-                label = stringResource(R.string.recipient_name),
-                modifier = Modifier.fillMaxWidth(),
-
-            )
-
-            // Auto-mapped designation (read-only)
-            CustomTextField(
-                value = if (uiState.selectedRecipient.isNotBlank() && recipients.contains(uiState.selectedRecipient)) {
-                    designations[recipients.indexOf(uiState.selectedRecipient)]
-                } else "",
-                onValueChange = { },
-                label = stringResource(R.string.recipient_designation),
-                modifier = Modifier.fillMaxWidth(),
-                enabled = false
-            )
-
-            CustomDropdown(
-                list = mediums,
-                selected = uiState.selectedMedium,
-                onSelect = { viewModel.updateSelectedMedium(it) },
-                label = stringResource(R.string.select_medium),
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            if (uiState.selectedMedium != stringResource(R.string.cash)) {
-                CustomTextField(
-                    value = uiState.mediumReference,
-                    onValueChange = { viewModel.updateMediumReference(it) },
-                    label = stringResource(R.string.medium_reference),
-                    modifier = Modifier.fillMaxWidth()
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
                 )
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.donation_information),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+
+                    CustomTextField(
+                        value = uiState.amount,
+                        onValueChange = { viewModel.updateAmount(it) },
+                        label = stringResource(R.string.amount),
+                        modifier = Modifier.fillMaxWidth(),
+                        keyboardType = KeyboardType.Number,
+                        isError = uiState.amountError,
+                        errorMessage = if (uiState.amountError) stringResource(R.string.amount_required) else null
+                    )
+
+                    MonthSelector(
+                        selectedMonths = uiState.selectedMonths,
+                        onMonthToggle = { viewModel.toggleMonth(it) },
+                        onSelectAll = { selectAll ->
+                            if (selectAll) {
+                                viewModel.updateSelectedMonths((1..12).toList())
+                            } else {
+                                viewModel.updateSelectedMonths(emptyList())
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    if (uiState.monthError) {
+                        Text(
+                            text = stringResource(R.string.month_required),
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+
+                    CustomDropdown(
+                        list = years,
+                        selected = integerFormat.format(uiState.selectedYear),
+                        onSelect = { selected ->
+                            val index = years.indexOf(selected)
+                            if (index != -1) {
+                                viewModel.updateSelectedYear(currentYear + index)
+                            }
+                        },
+                        label = stringResource(R.string.select_year),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    CustomDropdown(
+                        list = mediums,
+                        selected = uiState.selectedMedium,
+                        onSelect = { viewModel.updateSelectedMedium(it) },
+                        label = stringResource(R.string.select_medium),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    if (uiState.selectedMedium != stringResource(R.string.cash)) {
+                        CustomTextField(
+                            value = uiState.mediumReference,
+                            onValueChange = { viewModel.updateMediumReference(it) },
+                            label = stringResource(R.string.medium_reference),
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
+            }
+
+            // Recipient Information Card
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                )
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.recipient_information),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+
+                    CustomDropdown(
+                        list = recipients,
+                        selected = uiState.selectedRecipient,
+                        onSelect = { viewModel.updateSelectedRecipient(it) },
+                        label = stringResource(R.string.recipient_name),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    // Auto-mapped designation (read-only)
+                    CustomTextField(
+                        value = if (uiState.selectedRecipient.isNotBlank() && recipients.contains(uiState.selectedRecipient)) {
+                            designations[recipients.indexOf(uiState.selectedRecipient)]
+                        } else "",
+                        onValueChange = { },
+                        label = stringResource(R.string.recipient_designation),
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = false
+                    )
+                }
             }
         }
     }
@@ -238,4 +306,3 @@ fun AddReceiptScreen(navController: NavController) {
         )
     }
 }
-
