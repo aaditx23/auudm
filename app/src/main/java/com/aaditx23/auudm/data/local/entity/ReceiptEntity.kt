@@ -10,11 +10,12 @@ data class ReceiptEntity(
     val id: String = UUID.randomUUID().toString(),
     val donorName: String,
     val address: String,
-    val month: Int,
+    val month: List<Int>,
     val amount: Double,
     val recipientIndex: Int,
     val medium: Int,
     val mediumReference: String,
     val date: Long,
+    val createdAt: Long = System.currentTimeMillis(),
     val isSynced: Boolean = false
 )

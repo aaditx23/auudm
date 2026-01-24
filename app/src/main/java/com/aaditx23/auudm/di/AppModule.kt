@@ -3,6 +3,7 @@ package com.aaditx23.auudm.di
 import androidx.room.Room
 import com.aaditx23.auudm.data.NetworkMonitor
 import com.aaditx23.auudm.data.local.database.AppDatabase
+import com.aaditx23.auudm.data.local.database.MIGRATION_1_2
 import com.aaditx23.auudm.data.local.datastore.SettingsDataStore
 import com.aaditx23.auudm.data.remote.datasource.FirestoreDataSource
 import com.aaditx23.auudm.data.repository.ReceiptRepositoryImpl
@@ -38,7 +39,9 @@ val appModule = module {
             androidContext(),
             AppDatabase::class.java,
             "auudm.db"
-        ).build()
+        )
+            .addMigrations(MIGRATION_1_2)
+            .build()
     }
 
     // DAO

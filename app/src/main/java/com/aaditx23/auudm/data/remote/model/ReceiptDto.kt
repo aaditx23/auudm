@@ -4,12 +4,12 @@ data class ReceiptDto(
     var id: String = "",
     var donorName: String = "",
     var address: String = "",
-    var month: Int = 0,
+    var month: List<Int> = emptyList(),
     var amount: Double = 0.0,
     var recipientIndex: Int = 0,
     var medium: Int = 0,
     var mediumReference: String = "",
     var date: Long = 0L,
+    var createdAt: Long = 0L,
     var isSynced: Boolean = false
 )
-

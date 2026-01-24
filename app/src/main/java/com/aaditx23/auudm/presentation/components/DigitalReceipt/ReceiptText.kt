@@ -28,14 +28,14 @@ fun ReceiptText(
     ) {
         Text(
             text = label,
-            fontSize = 12.sp * scale,
+            fontSize = 8.sp * scale,
             fontWeight = FontWeight.W700,
             color = Color.Black
         )
         Spacer(modifier = Modifier.width(2.dp * scale))
         Text(
             text = text,
-            fontSize = 10.sp * scale,
+            fontSize = 7.sp * scale,
             color = Color.Black
         )
     }

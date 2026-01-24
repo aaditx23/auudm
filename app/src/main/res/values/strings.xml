@@ -23,18 +23,18 @@
     <string name="bangla">Bangla</string>
     <string name="search">Search</string>
     <string name="no_receipts">No receipts found</string>
-    <string name="january">January</string>
-    <string name="february">February</string>
-    <string name="march">March</string>
-    <string name="april">April</string>
+    <string name="january">Jan</string>
+    <string name="february">Feb</string>
+    <string name="march">Mar</string>
+    <string name="april">Apr</string>
     <string name="may">May</string>
-    <string name="june">June</string>
-    <string name="july">July</string>
-    <string name="august">August</string>
-    <string name="september">September</string>
-    <string name="october">October</string>
-    <string name="november">November</string>
-    <string name="december">December</string>
+    <string name="june">Jun</string>
+    <string name="july">Jul</string>
+    <string name="august">Aug</string>
+    <string name="september">Sep</string>
+    <string name="october">Oct</string>
+    <string name="november">Nov</string>
+    <string name="december">Dec</string>
     <string name="bkash">bKash</string>
     <string name="bank">Bank</string>
     <string name="cash">Cash</string>
@@ -66,6 +66,7 @@
     <string name="donor_information">Donor Information</string>
     <string name="payment_details">Payment Details</string>
     <string name="recipient_information">Recipient Information</string>
+    <string name="created_at">Creation time</string>
 
     <!-- Cloud Backup -->
     <string name="cloud_backup">Cloud Backup</string>
@@ -131,5 +132,18 @@
     <string name="recipient_02">Abdur Razzak Tipu</string>
     <string name="recipient_designation_02">Financial Secretary</string>
 
+    <!-- Month Numbers -->
+    <string name="num_1">1</string>
+    <string name="num_2">2</string>
+    <string name="num_3">3</string>
+    <string name="num_4">4</string>
+    <string name="num_5">5</string>
+    <string name="num_6">6</string>
+    <string name="num_7">7</string>
+    <string name="num_8">8</string>
+    <string name="num_9">9</string>
+    <string name="num_10">10</string>
+    <string name="num_11">11</string>
+    <string name="num_12">12</string>
 
 </resources>

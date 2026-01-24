@@ -152,10 +152,11 @@ fun ReceiptItem(receipt: Receipt, navController: NavController) {
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                     )
                     Text(
-                        text = months.getOrNull(receipt.month - 1) ?: "—",
+                        text = receipt.month.joinToString(", ") { months.getOrNull(it - 1) ?: "—" },
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.fillMaxWidth(0.5f)
                     )
                 }
 

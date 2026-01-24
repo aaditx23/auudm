@@ -33,7 +33,7 @@ interface ReceiptDao {
 
     @Query("SELECT * FROM receipts WHERE " +
             "(donorName LIKE '%' || :query || '%' OR id LIKE '%' || :query || '%') " +
-            "AND (:month IS NULL OR month = :month) " +
+            "AND (:month IS NULL OR ',' || month || ',' LIKE '%' || ',' || :month || ',' || '%') " +
             "AND (:medium IS NULL OR medium = :medium) " +
             "ORDER BY id DESC")
     fun searchReceiptsWithFilters(

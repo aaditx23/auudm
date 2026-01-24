@@ -83,7 +83,7 @@ fun DigitalReceipt(
     val locale = remember(language) { Locale.Builder().setLanguage(language).build() }
     val dateFormat = remember(locale) { SimpleDateFormat("dd/MM/yyyy", locale) }
     val formattedDate = remember(receipt.date, locale) { dateFormat.format(Date(receipt.date)) }
-    val monthName = months.getOrNull(receipt.month - 1) ?: ""
+    val monthName = receipt.month.joinToString(", ") { months.getOrNull(it - 1) ?: "" }
     val mediumName = mediums.getOrNull(receipt.medium - 1) ?: ""
     val recipientName = recipients.getOrNull(receipt.recipientIndex) ?: ""
     val recipientDesignation = designations.getOrNull(receipt.recipientIndex) ?: ""
@@ -164,11 +164,23 @@ fun DigitalReceipt(
                     .offset(y = 75.dp * scale)
                     .padding(horizontal = 32.dp * scale)
             ) {
-                ReceiptText(
-                    label = donorNameLabel,
-                    text = receipt.donorName,
-                    scale = scale
-                )
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    ReceiptText(
+                        label = donorNameLabel,
+                        text = receipt.donorName,
+                        scale = scale,
+                        modifier = Modifier.fillMaxWidth(0.55f)
+
+                    )
+
+
+                    ReceiptText(
+                        label = dateLabel,
+                        text = formattedDate,
+                        scale = scale,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
                 Spacer(Modifier.height(0.dp))
                 ReceiptText(
                     label = addressLabel,
@@ -177,20 +189,12 @@ fun DigitalReceipt(
                 )
                 Spacer(Modifier.height(0.dp))
 
-                Row(modifier = Modifier.fillMaxWidth()) {
-                    ReceiptText(
-                        label = monthLabel,
-                        text = monthName,
-                        scale = scale,
-                        modifier = Modifier.fillMaxWidth(0.55f)
-                    )
-                    ReceiptText(
-                        label = dateLabel,
-                        text = formattedDate,
-                        scale = scale,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
+                ReceiptText(
+                    label = monthLabel,
+                    text = monthName,
+                    scale = scale,
+                    modifier = Modifier.fillMaxWidth()
+                )
                 Spacer(Modifier.height(0.dp))
                 Row(modifier = Modifier.fillMaxWidth()) {
                     ReceiptText(

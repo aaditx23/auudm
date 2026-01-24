@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
@@ -31,6 +32,7 @@ import com.aaditx23.auudm.presentation.components.AppBarComponent
 import com.aaditx23.auudm.presentation.components.CustomDropdown
 import com.aaditx23.auudm.presentation.components.CustomTextField
 import com.aaditx23.auudm.presentation.components.DigitalReceipt.DigitalReceiptDialog
+import com.aaditx23.auudm.presentation.components.MonthSelector
 import com.aaditx23.auudm.presentation.util.Constants
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -44,7 +46,6 @@ fun AddReceiptScreen(navController: NavController) {
     val viewModel: AddReceiptViewModel = koinViewModel()
     val uiState by viewModel.uiState.collectAsState()
 
-    val months = Constants.MONTH_IDS.map { stringResource(it) }
     val mediums = Constants.MEDIUM_IDS.map { stringResource(it) }
     val recipients = Constants.RECIPIENT_IDS.map { stringResource(it) }
     val designations = Constants.RECIPIENT_DESIGNATION_IDS.map { stringResource(it) }
@@ -55,7 +56,7 @@ fun AddReceiptScreen(navController: NavController) {
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
-        viewModel.updateSelectedMonth(months[currentMonth - 1])
+        viewModel.updateSelectedMonths(listOf(currentMonth))
         viewModel.updateSelectedMedium(mediums[0])
         viewModel.updateSelectedRecipient(recipients[0])
     }
@@ -78,8 +79,8 @@ fun AddReceiptScreen(navController: NavController) {
                     onClick = {
                         if (viewModel.validateFields()) {
                             scope.launch {
-                                val receipt = viewModel.saveReceipt(months, mediums, recipients)
-                                viewModel.resetForm(months[currentMonth - 1], mediums[0], recipients[0])
+                                val receipt = viewModel.saveReceipt(mediums, recipients)
+                                viewModel.resetForm(currentMonth, mediums[0], recipients[0])
                                 viewModel.showDialog(receipt, true)
 
                             }
@@ -97,7 +98,7 @@ fun AddReceiptScreen(navController: NavController) {
                     onClick = {
                         if (viewModel.validateFields()) {
                             scope.launch {
-                                viewModel.saveReceipt(months, mediums, recipients)
+                                viewModel.saveReceipt(mediums, recipients)
                                 navController.popBackStack()
                             }
                         }
@@ -139,13 +140,19 @@ fun AddReceiptScreen(navController: NavController) {
                 errorMessage = if (uiState.addressError) stringResource(R.string.address_required) else null
             )
 
-            CustomDropdown(
-                list = months,
-                selected = uiState.selectedMonth,
-                onSelect = { viewModel.updateSelectedMonth(it) },
-                label = stringResource(R.string.select_month),
+            MonthSelector(
+                selectedMonths = uiState.selectedMonths,
+                onMonthToggle = { viewModel.toggleMonth(it) },
                 modifier = Modifier.fillMaxWidth()
             )
+
+            if (uiState.monthError) {
+                Text(
+                    text = "Please select at least one month",
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
 
             CustomTextField(
                 value = uiState.amount,

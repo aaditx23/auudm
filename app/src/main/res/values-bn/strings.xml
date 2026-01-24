@@ -23,18 +23,18 @@
     <string name="bangla">বাংলা</string>
     <string name="search">অনুসন্ধান</string>
     <string name="no_receipts">কোন রসিদ পাওয়া যায়নি</string>
-    <string name="january">জানুয়ারি</string>
-    <string name="february">ফেব্রুয়ারি</string>
+    <string name="january">জানু</string>
+    <string name="february">ফেব্রু</string>
     <string name="march">মার্চ</string>
     <string name="april">এপ্রিল</string>
     <string name="may">মে</string>
     <string name="june">জুন</string>
     <string name="july">জুলাই</string>
     <string name="august">আগস্ট</string>
-    <string name="september">সেপ্টেম্বর</string>
-    <string name="october">অক্টোবর</string>
-    <string name="november">নভেম্বর</string>
-    <string name="december">ডিসেম্বর</string>
+    <string name="september">সেপ্টে</string>
+    <string name="october">অক্টো</string>
+    <string name="november">নভে</string>
+    <string name="december">ডিসে</string>
     <string name="bkash">বিকাশ</string>
     <string name="bank">ব্যাংক</string>
     <string name="cash">নগদ</string>
@@ -66,6 +66,7 @@
     <string name="donor_information">দাতার তথ্য</string>
     <string name="payment_details">পেমেন্ট বিবরণ</string>
     <string name="recipient_information">প্রাপকের তথ্য</string>
+    <string name="created_at">তৈরির সময়</string>
 
     <!-- Cloud Backup -->
     <string name="cloud_backup">ক্লাউড ব্যাকআপ</string>
@@ -131,5 +132,18 @@
     <string name="recipient_02">আব্দুর রাজ্জাক টিপু</string>
     <string name="recipient_designation_02">অর্থ সম্পাদক</string>
 
+    <!-- Month Numbers -->
+    <string name="num_1">১</string>
+    <string name="num_2">২</string>
+    <string name="num_3">৩</string>
+    <string name="num_4">৪</string>
+    <string name="num_5">৫</string>
+    <string name="num_6">৬</string>
+    <string name="num_7">৭</string>
+    <string name="num_8">৮</string>
+    <string name="num_9">৯</string>
+    <string name="num_10">১০</string>
+    <string name="num_11">১১</string>
+    <string name="num_12">১২</string>
 
 </resources>
